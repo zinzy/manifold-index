@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useParams, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { Search, ChevronRight, ArrowLeft, BookOpen, ExternalLink, Filter, Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { clsx, type ClassValue } from 'clsx';
@@ -69,10 +69,28 @@ const Header = () => (
       transition={{ duration: 0.6 }}
     >
       <h1 className="text-3xl md:text-4xl font-bold leading-tight max-w-2xl">
-        <span className="text-brand-text">Manifold</span> is a free repository of inclusive, queer-affirming, anti-racist study resources on every single story in the Bible.
+        <span className="text-brand-text">Manifold</span> is a free repository of inclusive, queer-affirming, anti-racist, trauma-sensitive study resources on every single story in the Bible.
       </h1>
     </motion.div>
   </header>
+);
+
+const Footer = () => (
+  <footer className="py-12 px-6 border-t border-black/5">
+    <div className="max-w-5xl mx-auto text-center text-sm text-brand-muted font-medium">
+      <p>
+        Currently lovingly supported by{' '}
+        <a
+          href="https://zinzy.website"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-brand-text hover:text-blue-600 transition-colors underline decoration-black/10 underline-offset-4"
+        >
+          Zinzy Waleson Geene
+        </a>
+      </p>
+    </div>
+  </footer>
 );
 
 const SearchBar = ({ value, onChange, view, setView }: { value: string, onChange: (v: string) => void, view: 'books' | 'topics', setView: (v: 'books' | 'topics') => void }) => (
@@ -128,8 +146,22 @@ const BookCard: React.FC<{ book: BibleBook }> = ({ book }) => (
 // --- Pages ---
 
 const HomePage = () => {
-  const [search, setSearch] = useState('');
-  const [view, setView] = useState<'books' | 'topics'>('books');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const search = searchParams.get('q') || '';
+  const view = (searchParams.get('view') as 'books' | 'topics') || 'books';
+
+  const setSearch = (val: string) => {
+    const params = new URLSearchParams(searchParams);
+    if (val) params.set('q', val);
+    else params.delete('q');
+    setSearchParams(params, { replace: true });
+  };
+
+  const setView = (val: 'books' | 'topics') => {
+    const params = new URLSearchParams(searchParams);
+    params.set('view', val);
+    setSearchParams(params, { replace: true });
+  };
 
   const filteredBooks = useMemo(() => {
     return (contentData.books as BibleBook[]).filter(b =>
@@ -316,12 +348,13 @@ const StoryDetailPage = () => {
           {story.themes && story.themes.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {story.themes.map(theme => (
-                <span
+                <Link
                   key={theme}
-                  className="px-3 py-1 bg-black/5 rounded-full text-[10px] font-bold uppercase tracking-widest text-brand-muted"
+                  to={`/?q=${encodeURIComponent(theme)}&view=topics`}
+                  className="px-3 py-1 bg-black/5 rounded-full text-[10px] font-bold uppercase tracking-widest text-brand-muted hover:bg-black/10 hover:text-brand-text transition-all"
                 >
                   {theme}
-                </span>
+                </Link>
               ))}
             </div>
           )}
@@ -378,6 +411,7 @@ export default function App() {
         <Route path="/book/:bookId" element={<BookDetailPage />} />
         <Route path="/book/:bookId/story/:storyId" element={<StoryDetailPage />} />
       </Routes>
+      <Footer />
     </Router>
   );
 }
