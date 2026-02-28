@@ -257,17 +257,17 @@ const BookCard: React.FC<{ book: BibleBook }> = ({ book }) => {
     <motion.div
       whileHover={isAvailable ? { y: -4 } : undefined}
       className={cn(
-        "bg-brand-card p-6 rounded-2xl border border-black/5 card-shadow h-full flex flex-col transition-all",
+        "bg-brand-card p-2 md:p-4 sm:p-6 rounded-2xl border border-black/5 card-shadow h-full flex flex-col transition-all overflow-hidden",
         !isAvailable && "grayscale opacity-50 cursor-not-allowed"
       )}
     >
-      <div className="mb-4">
+      <div className="mb-3 sm:mb-4 truncate">
         <CategoryBadge category={book.category} />
       </div>
-      <h3 className="text-xl font-semibold mb-2">{book.name}</h3>
-      <div className="mt-auto flex items-center gap-4  text-[10px] text-brand-muted uppercase tracking-wider font-semibold">
-        <span>{book.stories.length} stories</span>
-        <span>{totalResources} resources</span>
+      <h3 className="text-base sm:text-xl font-semibold mb-2 truncate">{book.name}</h3>
+      <div className="mt-auto flex items-center gap-2 sm:gap-4 text-[9px] sm:text-[10px] text-brand-muted uppercase tracking-wider font-semibold truncate">
+        <span className="truncate whitespace-nowrap">{book.stories.length} stories</span>
+        <span className="truncate whitespace-nowrap">{totalResources} resources</span>
       </div>
     </motion.div>
   );
@@ -376,14 +376,14 @@ const HomePage = () => {
               </div>
 
               {bookSort === 'by_book' ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
                   {filteredBooks.map((book) => (
                     <BookCard key={book.id} book={book} />
                   ))}
                 </div>
               ) : (
                 <div className="space-y-12">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
                     {availableBooks.map((book) => (
                       <BookCard key={book.id} book={book} />
                     ))}
@@ -392,7 +392,7 @@ const HomePage = () => {
                   {unavailableBooks.length > 0 && (
                     <div>
                       <h2 className="text-xl font-semibold mb-6">No resources yet</h2>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
                         {unavailableBooks.map((book) => (
                           <BookCard key={book.id} book={book} />
                         ))}
