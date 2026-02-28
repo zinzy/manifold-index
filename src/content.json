@@ -4,13 +4,18 @@
       "id": "genesis",
       "name": "Genesis",
       "category": "Torah",
-      "description": "Start at the very beginning, and explore the foundational stories of the Book of Genesis.",
+      "description": "The beginnings of creation, humanity, and God's covenant.",
       "stories": [
         {
           "id": "creation",
           "title": "Creation",
           "reference": "Gen. 1-2",
           "summary": "On choice, and beginnings and endings",
+          "themes": [
+            "Beginnings",
+            "Identity",
+            "Nature"
+          ],
           "resources": [
             {
               "type": "Article",
@@ -46,16 +51,8 @@
       "id": "exodus",
       "name": "Exodus",
       "category": "Torah",
-      "description": "The journey from liberation to covenant.",
-      "stories": [
-        {
-          "id": "the-burning-bush",
-          "title": "The Burning Bush",
-          "reference": "Ex. 3",
-          "summary": "On identity, calling, and holy ground",
-          "resources": []
-        }
-      ]
+      "description": "Liberation from Egypt and the covenant at Sinai.",
+      "stories": []
     },
     {
       "id": "leviticus",
@@ -68,63 +65,77 @@
       "id": "numbers",
       "name": "Numbers",
       "category": "Torah",
-      "description": "Wandering, census, and the wilderness journey.",
+      "description": "Wilderness wanderings and the journey toward the promised land.",
       "stories": []
     },
     {
       "id": "deuteronomy",
       "name": "Deuteronomy",
       "category": "Torah",
-      "description": "The second law and final speeches of Moses.",
+      "description": "Moses’ final speeches and the renewal of the covenant.",
       "stories": []
     },
     {
       "id": "joshua",
       "name": "Joshua",
       "category": "Former Prophets",
-      "description": "Entering the land and the walls of Jericho.",
+      "description": "Entering and settling in the land.",
       "stories": []
     },
     {
       "id": "judges",
       "name": "Judges",
       "category": "Former Prophets",
-      "description": "Leaders, cycles, and the search for justice.",
+      "description": "Cycles of leadership and struggle.",
       "stories": []
     },
     {
       "id": "ruth",
       "name": "Ruth",
-      "category": "Five Scrolls",
-      "description": "Loyalty, migration, and radical inclusion.",
+      "category": "Writings",
+      "description": "A story of loyalty, migration, and belonging.",
       "stories": []
     },
     {
       "id": "1-samuel",
       "name": "1 Samuel",
       "category": "Former Prophets",
-      "description": "The rise of kings and the heart of David.",
+      "description": "From judges to kings; Samuel and Saul.",
       "stories": []
     },
     {
       "id": "2-samuel",
       "name": "2 Samuel",
       "category": "Former Prophets",
-      "description": "David's reign, triumphs, and failures.",
+      "description": "The reign of King David.",
       "stories": []
     },
     {
       "id": "1-kings",
       "name": "1 Kings",
       "category": "Former Prophets",
-      "description": "Solomon's wisdom and the divided kingdom.",
+      "description": "Solomon and the divided kingdom.",
       "stories": []
     },
     {
       "id": "2-kings",
       "name": "2 Kings",
       "category": "Former Prophets",
-      "description": "Prophets, exile, and the fall of Jerusalem.",
+      "description": "The fall of Israel and Judah.",
+      "stories": []
+    },
+    {
+      "id": "1-chronicles",
+      "name": "1 Chronicles",
+      "category": "Writings",
+      "description": "Genealogies and the reign of David.",
+      "stories": []
+    },
+    {
+      "id": "2-chronicles",
+      "name": "2 Chronicles",
+      "category": "Writings",
+      "description": "The history of Judah and the temple.",
       "stories": []
     },
     {
@@ -138,7 +149,357 @@
       "id": "nehemiah",
       "name": "Nehemiah",
       "category": "Writings",
-      "description": "Rebuilding the walls and restoring the community.",
+      "description": "Rebuilding Jerusalem’s walls and community.",
+      "stories": []
+    },
+    {
+      "id": "esther",
+      "name": "Esther",
+      "category": "Writings",
+      "description": "Courage and deliverance among the diaspora.",
+      "stories": []
+    },
+    {
+      "id": "job",
+      "name": "Job",
+      "category": "Wisdom",
+      "description": "A poetic exploration of suffering and faith.",
+      "stories": []
+    },
+    {
+      "id": "psalms",
+      "name": "Psalms",
+      "category": "Wisdom",
+      "description": "Songs and prayers of the people of God.",
+      "stories": []
+    },
+    {
+      "id": "proverbs",
+      "name": "Proverbs",
+      "category": "Wisdom",
+      "description": "Wisdom sayings for life.",
+      "stories": []
+    },
+    {
+      "id": "ecclesiastes",
+      "name": "Ecclesiastes",
+      "category": "Wisdom",
+      "description": "Reflections on meaning and mortality.",
+      "stories": []
+    },
+    {
+      "id": "song-of-solomon",
+      "name": "Song of Solomon",
+      "category": "Wisdom",
+      "description": "Poetry celebrating love.",
+      "stories": []
+    },
+    {
+      "id": "isaiah",
+      "name": "Isaiah",
+      "category": "Major Prophets",
+      "description": "Prophecies of judgment and hope.",
+      "stories": []
+    },
+    {
+      "id": "jeremiah",
+      "name": "Jeremiah",
+      "category": "Major Prophets",
+      "description": "Warnings, lament, and promise.",
+      "stories": []
+    },
+    {
+      "id": "lamentations",
+      "name": "Lamentations",
+      "category": "Major Prophets",
+      "description": "Poetic laments over Jerusalem.",
+      "stories": []
+    },
+    {
+      "id": "ezekiel",
+      "name": "Ezekiel",
+      "category": "Major Prophets",
+      "description": "Visions in exile and restoration.",
+      "stories": []
+    },
+    {
+      "id": "daniel",
+      "name": "Daniel",
+      "category": "Major Prophets",
+      "description": "Stories and visions in foreign courts.",
+      "stories": []
+    },
+    {
+      "id": "hosea",
+      "name": "Hosea",
+      "category": "Minor Prophets",
+      "description": "A prophetic call to faithful love.",
+      "stories": []
+    },
+    {
+      "id": "joel",
+      "name": "Joel",
+      "category": "Minor Prophets",
+      "description": "The day of the Lord and restoration.",
+      "stories": []
+    },
+    {
+      "id": "amos",
+      "name": "Amos",
+      "category": "Minor Prophets",
+      "description": "Justice and righteousness.",
+      "stories": []
+    },
+    {
+      "id": "obadiah",
+      "name": "Obadiah",
+      "category": "Minor Prophets",
+      "description": "A prophecy against Edom.",
+      "stories": []
+    },
+    {
+      "id": "jonah",
+      "name": "Jonah",
+      "category": "Minor Prophets",
+      "description": "A reluctant prophet and mercy.",
+      "stories": []
+    },
+    {
+      "id": "micah",
+      "name": "Micah",
+      "category": "Minor Prophets",
+      "description": "Justice, humility, and hope.",
+      "stories": []
+    },
+    {
+      "id": "nahum",
+      "name": "Nahum",
+      "category": "Minor Prophets",
+      "description": "Judgment on Nineveh.",
+      "stories": []
+    },
+    {
+      "id": "habakkuk",
+      "name": "Habakkuk",
+      "category": "Minor Prophets",
+      "description": "Questions about justice and faith.",
+      "stories": []
+    },
+    {
+      "id": "zephaniah",
+      "name": "Zephaniah",
+      "category": "Minor Prophets",
+      "description": "Warning and renewal.",
+      "stories": []
+    },
+    {
+      "id": "haggai",
+      "name": "Haggai",
+      "category": "Minor Prophets",
+      "description": "Rebuilding the temple.",
+      "stories": []
+    },
+    {
+      "id": "zechariah",
+      "name": "Zechariah",
+      "category": "Minor Prophets",
+      "description": "Visions of restoration.",
+      "stories": []
+    },
+    {
+      "id": "malachi",
+      "name": "Malachi",
+      "category": "Minor Prophets",
+      "description": "A call to renewed faithfulness.",
+      "stories": []
+    },
+    {
+      "id": "matthew",
+      "name": "Matthew",
+      "category": "Gospels",
+      "description": "The Gospel according to Matthew.",
+      "stories": []
+    },
+    {
+      "id": "mark",
+      "name": "Mark",
+      "category": "Gospels",
+      "description": "The Gospel according to Mark.",
+      "stories": []
+    },
+    {
+      "id": "luke",
+      "name": "Luke",
+      "category": "Gospels",
+      "description": "The Gospel according to Luke.",
+      "stories": []
+    },
+    {
+      "id": "john",
+      "name": "John",
+      "category": "Gospels",
+      "description": "The Gospel according to John.",
+      "stories": []
+    },
+    {
+      "id": "acts",
+      "name": "Acts",
+      "category": "New Testament History",
+      "description": "The acts of the apostles and the early church.",
+      "stories": []
+    },
+    {
+      "id": "romans",
+      "name": "Romans",
+      "category": "Pauline Epistles",
+      "description": "Paul’s letter to the Romans.",
+      "stories": []
+    },
+    {
+      "id": "1-corinthians",
+      "name": "1 Corinthians",
+      "category": "Pauline Epistles",
+      "description": "Paul’s first letter to the Corinthians.",
+      "stories": []
+    },
+    {
+      "id": "2-corinthians",
+      "name": "2 Corinthians",
+      "category": "Pauline Epistles",
+      "description": "Paul’s second letter to the Corinthians.",
+      "stories": []
+    },
+    {
+      "id": "galatians",
+      "name": "Galatians",
+      "category": "Pauline Epistles",
+      "description": "Paul’s letter to the Galatians.",
+      "stories": []
+    },
+    {
+      "id": "ephesians",
+      "name": "Ephesians",
+      "category": "Pauline Epistles",
+      "description": "Paul’s letter to the Ephesians.",
+      "stories": []
+    },
+    {
+      "id": "philippians",
+      "name": "Philippians",
+      "category": "Pauline Epistles",
+      "description": "Paul’s letter to the Philippians.",
+      "stories": []
+    },
+    {
+      "id": "colossians",
+      "name": "Colossians",
+      "category": "Pauline Epistles",
+      "description": "Paul’s letter to the Colossians.",
+      "stories": []
+    },
+    {
+      "id": "1-thessalonians",
+      "name": "1 Thessalonians",
+      "category": "Pauline Epistles",
+      "description": "Paul’s first letter to the Thessalonians.",
+      "stories": []
+    },
+    {
+      "id": "2-thessalonians",
+      "name": "2 Thessalonians",
+      "category": "Pauline Epistles",
+      "description": "Paul’s second letter to the Thessalonians.",
+      "stories": []
+    },
+    {
+      "id": "1-timothy",
+      "name": "1 Timothy",
+      "category": "Pauline Epistles",
+      "description": "Paul’s first letter to Timothy.",
+      "stories": []
+    },
+    {
+      "id": "2-timothy",
+      "name": "2 Timothy",
+      "category": "Pauline Epistles",
+      "description": "Paul’s second letter to Timothy.",
+      "stories": []
+    },
+    {
+      "id": "titus",
+      "name": "Titus",
+      "category": "Pauline Epistles",
+      "description": "Paul’s letter to Titus.",
+      "stories": []
+    },
+    {
+      "id": "philemon",
+      "name": "Philemon",
+      "category": "Pauline Epistles",
+      "description": "Paul’s letter to Philemon.",
+      "stories": []
+    },
+    {
+      "id": "hebrews",
+      "name": "Hebrews",
+      "category": "General Epistles",
+      "description": "A letter emphasizing Christ’s priesthood.",
+      "stories": []
+    },
+    {
+      "id": "james",
+      "name": "James",
+      "category": "General Epistles",
+      "description": "Faith lived out in action.",
+      "stories": []
+    },
+    {
+      "id": "1-peter",
+      "name": "1 Peter",
+      "category": "General Epistles",
+      "description": "Encouragement in suffering.",
+      "stories": []
+    },
+    {
+      "id": "2-peter",
+      "name": "2 Peter",
+      "category": "General Epistles",
+      "description": "Warnings and reminders.",
+      "stories": []
+    },
+    {
+      "id": "1-john",
+      "name": "1 John",
+      "category": "General Epistles",
+      "description": "Love, truth, and fellowship.",
+      "stories": []
+    },
+    {
+      "id": "2-john",
+      "name": "2 John",
+      "category": "General Epistles",
+      "description": "Walking in truth and love.",
+      "stories": []
+    },
+    {
+      "id": "3-john",
+      "name": "3 John",
+      "category": "General Epistles",
+      "description": "Support for faithful ministry.",
+      "stories": []
+    },
+    {
+      "id": "jude",
+      "name": "Jude",
+      "category": "General Epistles",
+      "description": "A call to contend for the faith.",
+      "stories": []
+    },
+    {
+      "id": "revelation",
+      "name": "Revelation",
+      "category": "Apocalypse",
+      "description": "Visions of hope, judgment, and renewal.",
       "stories": []
     }
   ]
