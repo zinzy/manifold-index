@@ -10,7 +10,7 @@
         {
           "type": "Book chapter",
           "title": "The Garden of Eden and the Heterosexual Contract",
-          "book": "Take Back the Word: A Queer Reading of the Bible",
+          "collection": "Take Back the Word: A Queer Reading of the Bible",
           "author": "Ken Stone",
           "url": "https://archive.org/details/takebackwordquee0000unse/page/n5/mode/2up"
         }
@@ -26,14 +26,7 @@
             "Identity",
             "Nature"
           ],
-          "resources": [
-            {
-              "type": "Article",
-              "title": "Some title",
-              "author": "Author",
-              "url": "#"
-            }
-          ]
+          "resources": []
         },
         {
           "id": "the-creation-of-man-and-woman",
@@ -45,7 +38,7 @@
             {
               "type": "Book chapter",
               "title": "The Garden of Eden and the Heterosexual Contract",
-              "book": "Take Back the Word: A Queer Reading of the Bible",
+              "collection": "Take Back the Word: A Queer Reading of the Bible",
               "author": "Ken Stone",
               "url": "https://archive.org/details/takebackwordquee0000unse/page/n5/mode/2up"
             }
@@ -663,14 +656,14 @@
         {
           "type": "Book chapter",
           "title": "When and Where I Enter, Then the Whole Race Enters with Me: Que(e)rying Exodus",
-          "book": "Take Back the Word: A Queer Reading of the Bible",
+          "collection": "Take Back the Word: A Queer Reading of the Bible",
           "author": "Irene Monroe",
           "url": "https://archive.org/details/takebackwordquee0000unse/page/n5/mode/2up"
         },
         {
           "type": "Book chapter",
           "title": "Outsiders, Aliens, and Boundary Crossers: A Queer Reading of the Hebrew Exodus",
-          "book": "Take Back the Word: A Queer Reading of the Bible",
+          "collection": "Take Back the Word: A Queer Reading of the Bible",
           "author": "Mona West",
           "url": "https://archive.org/details/takebackwordquee0000unse/page/n5/mode/2up"
         }
@@ -6396,11 +6389,18 @@
         },
         {
           "id": "jeremiah-in-the-cistern",
-          "title": "Jeremiah in the Cistern",
+          "title": "Jeremiah cast into the Cistern",
           "reference": "Jer. 38:1–28",
           "summary": "",
           "themes": [],
-          "resources": []
+          "resources": [
+            {
+              "type": "Article",
+              "title": "Sounding Queer Holiness on the Eve of Disaster",
+              "author": "Liz Edman",
+              "url": "https://justiceunbound.org/jeremiah/"
+            }
+          ]
         },
         {
           "id": "the-fall-of-jerusalem",
@@ -6762,7 +6762,14 @@
           "reference": "Ezek. 37:1–14",
           "summary": "",
           "themes": [],
-          "resources": []
+          "resources": [
+            {
+              "type": "Article",
+              "title": "The Prophet Ezekiel",
+              "author": "Julianna Whitson",
+              "url": "https://justiceunbound.org/ezekiel/"
+            }
+          ]
         },
         {
           "id": "the-two-sticks",
@@ -6828,6 +6835,14 @@
       "name": "Daniel",
       "category": "Prophets",
       "description": "Stories and visions in foreign courts.",
+      "resources": [
+        {
+          "type": "Article",
+          "title": "Queering Daniel",
+          "author": "Jon Carl Lewis",
+          "url": "https://justiceunbound.org/daniel/"
+        }
+      ],
       "stories": [
         {
           "id": "daniel-taken-to-babylon",
@@ -6998,6 +7013,14 @@
       "name": "Joel",
       "category": "Prophets",
       "description": "The day of the Lord and restoration.",
+      "resources": [
+        {
+          "type": "Article",
+          "title": "Joel",
+          "author": "Michael Vazquez",
+          "url": "https://justiceunbound.org/joel/"
+        }
+      ],
       "stories": [
         {
           "id": "the-plague-of-locusts",
@@ -7055,6 +7078,14 @@
       "name": "Amos",
       "category": "Prophets",
       "description": "Justice and righteousness.",
+      "resources": [
+        {
+          "type": "Article",
+          "title": "Amos",
+          "author": "Pauline Park",
+          "url": "https://justiceunbound.org/amos/"
+        }
+      ],
       "stories": [
         {
           "id": "judgment-on-israels-neighbors",
@@ -7120,6 +7151,14 @@
       "name": "Obadiah",
       "category": "Prophets",
       "description": "A prophecy against Edom.",
+      "resources": [
+        {
+          "type": "Article",
+          "title": "Obadiah: A Prophet of Holy Rage",
+          "author": "Jeff Moles",
+          "url": "https://justiceunbound.org/obadiah/"
+        }
+      ],
       "stories": [
         {
           "id": "obadiahs-vision",
@@ -7153,6 +7192,14 @@
       "name": "Jonah",
       "category": "Prophets",
       "description": "A reluctant prophet and mercy.",
+      "resources": [
+        {
+          "type": "Article",
+          "title": "Queering Jonah",
+          "author": "Megan Doherty",
+          "url": "https://justiceunbound.org/jonah/"
+        }
+      ],
       "stories": [
         {
           "id": "jonah-flees-the-presence-of-the-lord",
@@ -7194,6 +7241,14 @@
       "name": "Micah",
       "category": "Prophets",
       "description": "Justice, humility, and hope.",
+      "resources": [
+        {
+          "type": "Article",
+          "title": "Micah: What a Way to Live!",
+          "author": "Ashley McFaul-Erwin",
+          "url": "https://justiceunbound.org/micah/"
+        }
+      ],
       "stories": [
         {
           "id": "judgment-on-israel-and-judah",
@@ -7235,6 +7290,14 @@
       "name": "Nahum",
       "category": "Prophets",
       "description": "Judgment on Nineveh.",
+      "resources": [
+        {
+          "type": "Article",
+          "title": "Nahum",
+          "author": "Jackson Ringley",
+          "url": "https://justiceunbound.org/nahum/"
+        }
+      ],
       "stories": [
         {
           "id": "gods-wrath-against-nineveh",
@@ -7268,6 +7331,14 @@
       "name": "Habakkuk",
       "category": "Prophets",
       "description": "Questions about justice and faith.",
+      "resources": [
+        {
+          "type": "Article",
+          "title": "Habakkuk",
+          "author": "Alicia T. Crosby",
+          "url": "https://justiceunbound.org/habakkuk/"
+        }
+      ],
       "stories": [
         {
           "id": "habakkuks-complaint",
@@ -7317,6 +7388,14 @@
       "name": "Zephaniah",
       "category": "Prophets",
       "description": "Warning and renewal.",
+      "resources": [
+        {
+          "type": "Article",
+          "title": "Queering The Book of Zephaniah",
+          "author": "Jide Macaulay",
+          "url": "https://justiceunbound.org/zephaniah/"
+        }
+      ],
       "stories": [
         {
           "id": "the-day-of-the-lord-is-near",
@@ -7358,6 +7437,14 @@
       "name": "Haggai",
       "category": "Prophets",
       "description": "Rebuilding the temple.",
+      "resources": [
+        {
+          "type": "Article",
+          "title": "Haggai",
+          "author": "Austen Hartke",
+          "url": "https://justiceunbound.org/haggai/"
+        }
+      ],
       "stories": [
         {
           "id": "the-command-to-rebuild-the-temple",
@@ -7407,6 +7494,14 @@
       "name": "Zechariah",
       "category": "Prophets",
       "description": "Visions of restoration.",
+      "resources": [
+        {
+          "type": "Article",
+          "title": "Zechariah",
+          "author": "Samantha Davis",
+          "url": "https://justiceunbound.org/zechariah/"
+        }
+      ],
       "stories": [
         {
           "id": "zechariahs-call-to-repentance",
@@ -8538,6 +8633,120 @@
       "name": "Mark",
       "category": "Gospels",
       "description": "The Gospel according to Mark.",
+      "resources": [
+        {
+          "type": "Article",
+          "title": "Mark 1",
+          "collection": "Queering the Bible: The Gospel of Mark",
+          "author": "Benjamin Perry",
+          "url": "https://justiceunbound.org/queeringmark1/"
+        },
+        {
+          "type": "Article",
+          "title": "Mark 2",
+          "collection": "Queering the Bible: The Gospel of Mark",
+          "author": "Ralph Basui Watkins",
+          "url": "https://justiceunbound.org/queeringmark2/"
+        },
+        {
+          "type": "Article",
+          "title": "Mark 3",
+          "collection": "Queering the Bible: The Gospel of Mark",
+          "author": "Brooke Scott",
+          "url": "https://justiceunbound.org/mark-3/"
+        },
+        {
+          "type": "Article",
+          "title": "Mark 4",
+          "collection": "Queering the Bible: The Gospel of Mark",
+          "author": "Shelby Lewis",
+          "url": "https://justiceunbound.org/queeringmark4/"
+        },
+        {
+          "type": "Article",
+          "title": "Mark 5",
+          "collection": "Queering the Bible: The Gospel of Mark",
+          "author": "M Barclay",
+          "url": "https://justiceunbound.org/queeringmark5/"
+        },
+        {
+          "type": "Article",
+          "title": "Mark 6",
+          "collection": "Queering the Bible: The Gospel of Mark",
+          "author": "Jonah P. Overton",
+          "url": "https://justiceunbound.org/mark-6/"
+        },
+        {
+          "type": "Article",
+          "title": "Mark 7",
+          "collection": "Queering the Bible: The Gospel of Mark",
+          "author": "Shanea Leonard",
+          "url": "https://justiceunbound.org/mark-7/"
+        },
+        {
+          "type": "Article",
+          "title": "Mark 8",
+          "collection": "Queering the Bible: The Gospel of Mark",
+          "author": "Kashif A. Graham",
+          "url": "https://justiceunbound.org/mark-8/"
+        },
+        {
+          "type": "Article",
+          "title": "Mark 9",
+          "collection": "Queering the Bible: The Gospel of Mark",
+          "author": "Eddie A. Rosa Fuentes",
+          "url": "https://justiceunbound.org/mark-9/"
+        },
+        {
+          "type": "Article",
+          "title": "Mark 10",
+          "collection": "Queering the Bible: The Gospel of Mark",
+          "author": "Shannon TL Kearns",
+          "url": "https://justiceunbound.org/mark-10/"
+        },
+        {
+          "type": "Article",
+          "title": "Mark 11",
+          "collection": "Queering the Bible: The Gospel of Mark",
+          "author": "Jazz Logan",
+          "url": "https://justiceunbound.org/mark-11/"
+        },
+        {
+          "type": "Article",
+          "title": "Mark 12",
+          "collection": "Queering the Bible: The Gospel of Mark",
+          "author": "Billy Kluttz",
+          "url": "https://justiceunbound.org/mark-12/"
+        },
+        {
+          "type": "Article",
+          "title": "Mark 13",
+          "collection": "Queering the Bible: The Gospel of Mark",
+          "author": "Ophelia Hu Kinney",
+          "url": "https://justiceunbound.org/mark-13/"
+        },
+        {
+          "type": "Article",
+          "title": "Mark 14",
+          "collection": "Queering the Bible: The Gospel of Mark",
+          "author": "Talique Taylor",
+          "url": "https://justiceunbound.org/mark-14/"
+        },
+        {
+          "type": "Article",
+          "title": "Mark 15",
+          "collection": "Queering the Bible: The Gospel of Mark",
+          "author": "Casey Overton",
+          "url": "https://justiceunbound.org/mark-15/"
+        },
+        {
+          "type": "Article",
+          "title": "Mark 16",
+          "collection": "Queering the Bible: The Gospel of Mark",
+          "author": "Shelley Donaldson",
+          "url": "https://justiceunbound.org/mark-16/"
+        }
+      ],
       "stories": [
         {
           "id": "john-the-baptist-prepares-the-way",

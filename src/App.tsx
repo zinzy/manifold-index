@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import React, { useState, useMemo, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link, useParams, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { Search, ChevronRight, ArrowLeft, BookOpen, ExternalLink, Filter, Menu, X, Info } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { clsx, type ClassValue } from 'clsx';
@@ -17,7 +17,7 @@ function cn(...inputs: ClassValue[]) {
 interface Resource {
   type: string;
   title: string;
-  book?: string;
+  collection?: string;
   author?: string;
   url: string;
 }
@@ -91,29 +91,97 @@ const Header = () => (
         <img src={logo} alt="Manifold Logo" className="h-10 w-auto" />
       </Link>
       <h1 className="text-3xl md:text-4xl leading-tight max-w-2xl">
-        A free repository of inclusive, liberating, queer-affirming, anti-racist, trauma-sensitive study resources on every single story in the Christian Bible.
+        A free repository of inclusive, liberating, queer-affirming, anti-racist, trauma-sensitive Resources on every single story in the Christian Bible.
       </h1>
     </motion.div>
   </header>
 );
 
-const Footer = () => (
-  <footer className="py-12 px-6 border-t border-black/5">
-    <div className="max-w-5xl mx-auto text-center text-sm text-brand-muted font-medium">
-      <p>
-        Created by{' '}
-        <a
-          href="https://zinzy.website"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-brand-text hover:text-[#6576F3] transition-colors underline decoration-black/10 underline-offset-4"
-        >
-          Zinzy Waleson Geene
-        </a>
-      </p>
-    </div>
-  </footer>
-);
+const Footer = () => {
+  const getOrigin = (url: string) => {
+    try {
+      const u = new URL(url);
+      return { origin: u.origin, hostname: u.hostname.replace(/^www\./, '') };
+    } catch {
+      return null;
+    }
+  };
+
+  const domainCounts = new Map<string, { origin: string; count: number }>();
+
+  const addDomain = (url: string) => {
+    const parsed = getOrigin(url);
+    if (!parsed) return;
+    if (parsed.hostname === 'archive.org') return;
+
+    const existing = domainCounts.get(parsed.hostname);
+    if (existing) {
+      existing.count += 1;
+    } else {
+      domainCounts.set(parsed.hostname, { origin: parsed.origin, count: 1 });
+    }
+  };
+
+  (contentData.books as BibleBook[]).forEach(book => {
+    if (book.resources) {
+      book.resources.forEach(r => addDomain(r.url));
+    }
+    book.stories.forEach(story => {
+      story.resources.forEach(r => addDomain(r.url));
+    });
+  });
+
+  const domains = Array.from(domainCounts.entries())
+    .filter(([_, data]) => data.count >= 2)
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .map(([hostname, data]) => [hostname, data.origin]);
+
+  return (
+    <footer className="py-12 md:py-16 px-6 border-t border-black/5 mt-12">
+      {domains.length > 0 && (
+        <div className="max-w-5xl mx-auto mb-16">
+          <h2 className="text-xs font-semibold text-brand-muted uppercase tracking-widest mb-6 text-center border-b border-black/5 pb-4">
+            Sources & Organizations
+          </h2>
+          <div className="flex flex-wrap justify-center gap-3">
+            {domains.map(([hostname, origin]) => (
+              <a
+                key={hostname}
+                href={origin}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-3 py-2 bg-brand-card hover:bg-white border border-black/5 hover:border-black/20 rounded-lg card-shadow transition-all group"
+              >
+                <img
+                  src={`https://www.google.com/s2/favicons?domain=${hostname}&sz=32`}
+                  alt=""
+                  className="w-4 h-4 grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all"
+                />
+                <span className="text-xs font-semibold text-brand-muted group-hover:text-[#6576F3] transition-colors">
+                  {hostname}
+                </span>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="max-w-5xl mx-auto text-center text-sm text-brand-muted font-medium">
+        <p>
+          Created by{' '}
+          <a
+            href="https://zinzy.website"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-brand-text hover:text-[#6576F3] transition-colors underline decoration-black/10 underline-offset-4"
+          >
+            Zinzy Waleson Geene
+          </a>
+        </p>
+      </div>
+    </footer>
+  );
+};
 
 const SearchBar = ({ value, onChange, view, setView }: { value: string, onChange: (v: string) => void, view: 'books' | 'topics', setView: (v: 'books' | 'topics') => void }) => {
   const [isSticky, setIsSticky] = useState(false);
@@ -246,10 +314,12 @@ const HomePage = () => {
     const map: Record<string, { bookId: string, bookName: string, story: Story }[]> = {};
     (contentData.books as BibleBook[]).forEach(book => {
       book.stories.forEach(story => {
-        story.themes?.forEach(theme => {
-          if (!map[theme]) map[theme] = [];
-          map[theme].push({ bookId: book.id, bookName: book.name, story });
-        });
+        if (story.resources.length > 0) {
+          story.themes?.forEach(theme => {
+            if (!map[theme]) map[theme] = [];
+            map[theme].push({ bookId: book.id, bookName: book.name, story });
+          });
+        }
       });
     });
     return map;
@@ -288,20 +358,20 @@ const HomePage = () => {
               exit={{ opacity: 0, x: 20 }}
               className="space-y-6"
             >
-              <div className="flex items-center gap-2 bg-brand-card p-1 rounded-lg w-fit border border-black/5 card-shadow mb-8">
+              <div className="flex flex-wrap items-center gap-1 sm:gap-2 bg-brand-card p-1 rounded-lg w-full sm:w-fit border border-black/5 card-shadow mb-8">
                 <button
                   onClick={() => setBookSort('by_book')}
-                  className={cn("flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors", bookSort === 'by_book' ? "bg-white shadow-sm text-brand-text" : "text-brand-muted hover:text-brand-text")}
+                  className={cn("flex flex-1 sm:flex-initial justify-center items-center gap-1.5 px-2 sm:px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-colors", bookSort === 'by_book' ? "bg-white shadow-sm text-brand-text" : "text-brand-muted hover:text-brand-text")}
                 >
                   <BookOpen className="w-4 h-4" />
-                  By book
+                  <span className="truncate">By book</span>
                 </button>
                 <button
                   onClick={() => setBookSort('by_availability')}
-                  className={cn("flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors", bookSort === 'by_availability' ? "bg-white shadow-sm text-brand-text" : "text-brand-muted hover:text-brand-text")}
+                  className={cn("flex flex-1 sm:flex-initial justify-center items-center gap-1.5 px-2 sm:px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-colors", bookSort === 'by_availability' ? "bg-white shadow-sm text-brand-text" : "text-brand-muted hover:text-brand-text")}
                 >
                   <Filter className="w-4 h-4" />
-                  By availability
+                  <span className="truncate">By availability</span>
                 </button>
               </div>
 
@@ -396,19 +466,20 @@ const BookDetailPage = () => {
   const [storySort, setStorySort] = useState<'by_story' | 'by_availability' | 'about_book'>(
     initialSort
   );
+  const [showNestedResources, setShowNestedResources] = useState(false);
 
   const renderStory = (story: Story) => {
     const hasResources = story.resources.length > 0;
     const storyContent = (
       <div className={cn(
         "group bg-brand-card p-4 md:p-6 rounded-xl border border-black/5 card-shadow flex flex-col md:flex-row md:items-center gap-4 transition-all mb-3",
-        hasResources ? "hover:border-black/20" : "grayscale opacity-50 cursor-not-allowed"
+        hasResources && !showNestedResources ? "hover:border-black/20" : (!hasResources ? "grayscale opacity-50 cursor-not-allowed" : "")
       )}>
         <div className="w-24 text-[11px] font-semibold text-brand-muted uppercase tracking-wider">
           {story.reference}
         </div>
         <div className="flex-1">
-          <h4 className="font-semibold text-lg group-hover:text-[#6576F3] transition-colors">{story.title}</h4>
+          <h4 className={cn("font-semibold text-lg transition-colors", hasResources && !showNestedResources && "group-hover:text-[#6576F3]")}>{story.title}</h4>
           {story.themes && story.themes.length > 0 && (
             <div className="flex flex-wrap gap-2 mt-1">
               {story.themes.map(theme => (
@@ -422,13 +493,48 @@ const BookDetailPage = () => {
         <div className="flex-1 text-sm text-brand-muted italic">
           {story.summary}
         </div>
-        {hasResources && (
+        {hasResources && !showNestedResources && (
           <ChevronRight className="w-5 h-5 text-brand-muted opacity-0 group-hover:opacity-100 transition-opacity hidden md:block" />
         )}
       </div>
     );
 
     if (!hasResources) return <div key={story.id}>{storyContent}</div>;
+
+    if (showNestedResources) {
+      return (
+        <div key={story.id} className="mb-8">
+          {storyContent}
+          <div className="pl-6 md:pl-20 mt-2 mb-6 space-y-2">
+            {story.resources.map((res, i) => (
+              <a
+                key={i}
+                href={res.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 bg-brand-card p-3 rounded-xl border border-black/5 card-shadow hover:border-black/20 transition-all"
+              >
+                <div className="flex-shrink-0">
+                  <span className="text-[9px] font-semibold uppercase tracking-wider px-1.5 py-0.5 bg-gray-100 text-gray-500 rounded">
+                    {res.type}
+                  </span>
+                </div>
+                <div className="flex-1 flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 truncate">
+                  <h4 className="font-semibold text-sm group-hover:text-[#6576F3] transition-colors truncate">{res.title}</h4>
+                  {res.author && (
+                    <span className="text-xs text-brand-muted truncate">
+                      by {res.author}
+                      {res.collection && <span> in <span className="italic">{res.collection}</span></span>}
+                    </span>
+                  )}
+                </div>
+                <ExternalLink className="w-4 h-4 text-brand-muted group-hover:text-[#6576F3] transition-colors flex-shrink-0 hidden sm:block" />
+              </a>
+            ))}
+          </div>
+        </div>
+      );
+    }
 
     return (
       <Link key={story.id} to={`/book/${book.id}/story/${story.id}`}>
@@ -455,29 +561,42 @@ const BookDetailPage = () => {
           {book.description}
         </p>
 
-        <div className="flex items-center gap-2 bg-brand-card p-1 rounded-lg w-fit border border-black/5 card-shadow mb-8">
-          <button
-            onClick={() => setStorySort('by_story')}
-            className={cn("flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors", storySort === 'by_story' ? "bg-white shadow-sm text-brand-text" : "text-brand-muted hover:text-brand-text")}
-          >
-            <BookOpen className="w-4 h-4" />
-            By story
-          </button>
-          <button
-            onClick={() => setStorySort('by_availability')}
-            className={cn("flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors", storySort === 'by_availability' ? "bg-white shadow-sm text-brand-text" : "text-brand-muted hover:text-brand-text")}
-          >
-            <Filter className="w-4 h-4" />
-            By availability
-          </button>
-          {hasBookResources && (
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+          <div className="flex flex-wrap items-center gap-1 sm:gap-2 bg-brand-card p-1 rounded-lg w-full sm:w-fit border border-black/5 card-shadow">
             <button
-              onClick={() => setStorySort('about_book')}
-              className={cn("flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors", storySort === 'about_book' ? "bg-white shadow-sm text-brand-text" : "text-brand-muted hover:text-brand-text")}
+              onClick={() => setStorySort('by_story')}
+              className={cn("flex flex-1 sm:flex-initial justify-center items-center gap-1.5 px-2 sm:px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-colors", storySort === 'by_story' ? "bg-white shadow-sm text-brand-text" : "text-brand-muted hover:text-brand-text")}
             >
-              <Info className="w-4 h-4" />
-              About the book
+              <BookOpen className="w-4 h-4" />
+              <span className="truncate">By story</span>
             </button>
+            <button
+              onClick={() => setStorySort('by_availability')}
+              className={cn("flex flex-1 sm:flex-initial justify-center items-center gap-1.5 px-2 sm:px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-colors", storySort === 'by_availability' ? "bg-white shadow-sm text-brand-text" : "text-brand-muted hover:text-brand-text")}
+            >
+              <Filter className="w-4 h-4" />
+              <span className="truncate">By availability</span>
+            </button>
+            {hasBookResources && (
+              <button
+                onClick={() => setStorySort('about_book')}
+                className={cn("flex flex-1 sm:flex-initial justify-center items-center gap-1.5 px-2 sm:px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-colors", storySort === 'about_book' ? "bg-white shadow-sm text-brand-text" : "text-brand-muted hover:text-brand-text")}
+              >
+                <Info className="w-4 h-4" />
+                <span className="truncate">About the book</span>
+              </button>
+            )}
+          </div>
+
+          {storySort !== 'about_book' && (
+            <label className="flex items-center gap-3 cursor-pointer">
+              <span className="text-sm font-medium text-brand-muted">Show nested resources</span>
+              <div className="relative">
+                <input type="checkbox" className="sr-only" checked={showNestedResources} onChange={() => setShowNestedResources(!showNestedResources)} />
+                <div className={cn("block w-10 h-6 rounded-full transition-colors", showNestedResources ? "bg-[#6576F3]" : "bg-black/20")} />
+                <div className={cn("absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform", showNestedResources ? "translate-x-4" : "translate-x-0")} />
+              </div>
+            </label>
           )}
         </div>
 
@@ -485,7 +604,7 @@ const BookDetailPage = () => {
           <div className="space-y-8">
             <section>
               <h2 className="text-xs font-semibold uppercase tracking-widest text-brand-muted mb-6 border-b border-black/5 pb-2">
-                Study Resources ({book.resources.length})
+                Resources ({book.resources.length})
               </h2>
               <div className="grid gap-4">
                 {book.resources.map((res, i) => (
@@ -506,7 +625,7 @@ const BookDetailPage = () => {
                       {res.author && (
                         <p className="text-sm text-brand-muted mt-1">
                           by {res.author}
-                          {res.book && <span> in <span className="italic">{res.book}</span></span>}
+                          {res.collection && <span> in <span className="italic">{res.collection}</span></span>}
                         </p>
                       )}
                     </div>
@@ -596,7 +715,7 @@ const StoryDetailPage = () => {
         <div className="space-y-8">
           <section>
             <h2 className="text-xs font-semibold uppercase tracking-widest text-brand-muted mb-6 border-b border-black/5 pb-2">
-              Study Resources ({story.resources.length})
+              Resources ({story.resources.length})
             </h2>
 
             {story.resources.length > 0 ? (
@@ -619,7 +738,7 @@ const StoryDetailPage = () => {
                       {res.author && (
                         <p className="text-sm text-brand-muted mt-1">
                           by {res.author}
-                          {res.book && <span> in <span className="italic">{res.book}</span></span>}
+                          {res.collection && <span> in <span className="italic">{res.collection}</span></span>}
                         </p>
                       )}
                     </div>
@@ -641,9 +760,24 @@ const StoryDetailPage = () => {
   );
 };
 
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'smooth'
+    });
+  }, [pathname]);
+
+  return null;
+};
+
 export default function App() {
   return (
     <Router>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/book/:bookId" element={<BookDetailPage />} />
