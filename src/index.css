@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-bg: #FDFCFB;
+  --color-brand-card: #FFFFFF;
+  --color-brand-text: #1A1A1A;
+  --color-brand-muted: #666666;
+  
+  --color-category-torah: #E0F2FE;
+  --color-category-torah-dot: #3B82F6;
+  
+  --color-category-prophets: #DCFCE7;
+  --color-category-prophets-dot: #22C55E;
+  
+  --color-category-scrolls: #F3E8FF;
+  --color-category-scrolls-dot: #A855F7;
+  
+  --color-category-writings: #FCE7F3;
+  --color-category-writings-dot: #EC4899;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-brand-bg text-brand-text font-sans antialiased;
+  }
+}
+
+.card-shadow {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}

@@ -1,0 +1,145 @@
+{
+  "books": [
+    {
+      "id": "genesis",
+      "name": "Genesis",
+      "category": "Torah",
+      "description": "Start at the very beginning, and explore the foundational stories of the Book of Genesis.",
+      "stories": [
+        {
+          "id": "creation",
+          "title": "Creation",
+          "reference": "Gen. 1-2",
+          "summary": "On choice, and beginnings and endings",
+          "resources": [
+            {
+              "type": "Article",
+              "title": "A Queer Perspective on Creation",
+              "author": "Rev. Dr. Alex Smith",
+              "url": "#"
+            },
+            {
+              "type": "Podcast",
+              "title": "The First Seven Days",
+              "author": "Inclusive Faith Podcast",
+              "url": "#"
+            }
+          ]
+        },
+        {
+          "id": "the-fall",
+          "title": "The Fall",
+          "reference": "Gen. 3",
+          "summary": "On responsibility, caveats, and showing yourself to God",
+          "resources": []
+        },
+        {
+          "id": "cain-and-abel",
+          "title": "Cain and Abel",
+          "reference": "Gen. 4",
+          "summary": "On siblingly love, jealousy, and spilling the tea",
+          "resources": []
+        }
+      ]
+    },
+    {
+      "id": "exodus",
+      "name": "Exodus",
+      "category": "Torah",
+      "description": "The journey from liberation to covenant.",
+      "stories": [
+        {
+          "id": "the-burning-bush",
+          "title": "The Burning Bush",
+          "reference": "Ex. 3",
+          "summary": "On identity, calling, and holy ground",
+          "resources": []
+        }
+      ]
+    },
+    {
+      "id": "leviticus",
+      "name": "Leviticus",
+      "category": "Torah",
+      "description": "Laws, holiness, and community life.",
+      "stories": []
+    },
+    {
+      "id": "numbers",
+      "name": "Numbers",
+      "category": "Torah",
+      "description": "Wandering, census, and the wilderness journey.",
+      "stories": []
+    },
+    {
+      "id": "deuteronomy",
+      "name": "Deuteronomy",
+      "category": "Torah",
+      "description": "The second law and final speeches of Moses.",
+      "stories": []
+    },
+    {
+      "id": "joshua",
+      "name": "Joshua",
+      "category": "Former Prophets",
+      "description": "Entering the land and the walls of Jericho.",
+      "stories": []
+    },
+    {
+      "id": "judges",
+      "name": "Judges",
+      "category": "Former Prophets",
+      "description": "Leaders, cycles, and the search for justice.",
+      "stories": []
+    },
+    {
+      "id": "ruth",
+      "name": "Ruth",
+      "category": "Five Scrolls",
+      "description": "Loyalty, migration, and radical inclusion.",
+      "stories": []
+    },
+    {
+      "id": "1-samuel",
+      "name": "1 Samuel",
+      "category": "Former Prophets",
+      "description": "The rise of kings and the heart of David.",
+      "stories": []
+    },
+    {
+      "id": "2-samuel",
+      "name": "2 Samuel",
+      "category": "Former Prophets",
+      "description": "David's reign, triumphs, and failures.",
+      "stories": []
+    },
+    {
+      "id": "1-kings",
+      "name": "1 Kings",
+      "category": "Former Prophets",
+      "description": "Solomon's wisdom and the divided kingdom.",
+      "stories": []
+    },
+    {
+      "id": "2-kings",
+      "name": "2 Kings",
+      "category": "Former Prophets",
+      "description": "Prophets, exile, and the fall of Jerusalem.",
+      "stories": []
+    },
+    {
+      "id": "ezra",
+      "name": "Ezra",
+      "category": "Writings",
+      "description": "Return from exile and rebuilding the temple.",
+      "stories": []
+    },
+    {
+      "id": "nehemiah",
+      "name": "Nehemiah",
+      "category": "Writings",
+      "description": "Rebuilding the walls and restoring the community.",
+      "stories": []
+    }
+  ]
+}
