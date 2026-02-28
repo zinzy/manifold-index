@@ -91,7 +91,7 @@ const Header = () => (
         <img src={logo} alt="Manifold Logo" className="h-10 w-auto" />
       </Link>
       <h1 className="text-3xl md:text-4xl leading-tight max-w-2xl">
-        A free repository of inclusive, liberating, queer-affirming, anti-racist, trauma-sensitive Resources on every single story in the Christian Bible.
+        A free repository of inclusive, liberating, queer-affirming, anti-racist, traumaresources on every single story in the Christian Bible.
       </h1>
     </motion.div>
   </header>

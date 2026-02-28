@@ -5212,6 +5212,78 @@
       "name": "Job",
       "category": "Wisdom",
       "description": "A poetic exploration of suffering and faith.",
+      "resources": [
+        {
+          "type": "Book chapter",
+          "title": "Job 1",
+          "book": "Queering the Bible: Job",
+          "author": "Daniel Morales",
+          "url": "https://justiceunbound.org/job-1/"
+        },
+        {
+          "type": "Book chapter",
+          "title": "Job 2",
+          "book": "Queering the Bible: Job",
+          "author": "Shawna Bowman",
+          "url": "https://justiceunbound.org/job-2/"
+        },
+        {
+          "type": "Book chapter",
+          "title": "Job 3",
+          "book": "Queering the Bible: Job",
+          "author": "Tyler Coles",
+          "url": "https://justiceunbound.org/job-3/"
+        },
+        {
+          "type": "Book chapter",
+          "title": "Job 4",
+          "book": "Queering the Bible: Job",
+          "author": "Miche Ilana van Essen",
+          "url": "https://justiceunbound.org/job-4/"
+        },
+        {
+          "type": "Book chapter",
+          "title": "Job 10",
+          "book": "Queering the Bible: Job",
+          "author": "Laura Mariko Cheifetz",
+          "url": "https://justiceunbound.org/job-10/"
+        },
+        {
+          "type": "Book chapter",
+          "title": "Job 11",
+          "book": "Queering the Bible: Job",
+          "author": "Erin Tolar",
+          "url": "https://justiceunbound.org/job-11/"
+        },
+        {
+          "type": "Book chapter",
+          "title": "Job 15",
+          "book": "Queering the Bible: Job",
+          "author": "Mike Maeshiro",
+          "url": "https://justiceunbound.org/job-15/"
+        },
+        {
+          "type": "Book chapter",
+          "title": "Job 21",
+          "book": "Queering the Bible: Job",
+          "author": "Micah Melody Taberner",
+          "url": "https://justiceunbound.org/job-21/"
+        },
+        {
+          "type": "Book chapter",
+          "title": "Job 34",
+          "book": "Queering the Bible: Job",
+          "author": "Jason Oliver Evans",
+          "url": "https://justiceunbound.org/job-34/"
+        },
+        {
+          "type": "Book chapter",
+          "title": "Job 38",
+          "book": "Queering the Bible: Job",
+          "author": "Angela Tyler-Williams",
+          "url": "https://justiceunbound.org/job-38/"
+        }
+      ],
       "stories": [
         {
           "id": "jobs-character-and-wealth",
@@ -10711,6 +10783,78 @@
       "name": "Acts",
       "category": "Acts of Apostles",
       "description": "The acts of the apostles and the early church.",
+      "resources": [
+        {
+          "type": "Article",
+          "title": "Acts 1",
+          "book": "Queering the Bible: The Book of Acts",
+          "author": "Eric A. Thomas",
+          "url": "https://justiceunbound.org/acts-1/"
+        },
+        {
+          "type": "Article",
+          "title": "Acts 2",
+          "book": "Queering the Bible: The Book of Acts",
+          "author": "Rosa Ross",
+          "url": "https://justiceunbound.org/acts-2/"
+        },
+        {
+          "type": "Article",
+          "title": "Acts 4",
+          "book": "Queering the Bible: The Book of Acts",
+          "author": "Carla Christopher",
+          "url": "https://justiceunbound.org/acts-4/"
+        },
+        {
+          "type": "Article",
+          "title": "Acts 5",
+          "book": "Queering the Bible: The Book of Acts",
+          "author": "Kathleen Talvacchia",
+          "url": "https://justiceunbound.org/acts-5/"
+        },
+        {
+          "type": "Article",
+          "title": "Acts 9",
+          "book": "Queering the Bible: The Book of Acts",
+          "author": "Taj Smith",
+          "url": "https://justiceunbound.org/acts-9/"
+        },
+        {
+          "type": "Article",
+          "title": "Acts 10",
+          "book": "Queering the Bible: The Book of Acts",
+          "author": "Joseph N. Goh",
+          "url": "https://justiceunbound.org/acts-10/"
+        },
+        {
+          "type": "Article",
+          "title": "Acts 11",
+          "book": "Queering the Bible: The Book of Acts",
+          "author": "Alex Clare-Young",
+          "url": "https://justiceunbound.org/acts-11/"
+        },
+        {
+          "type": "Article",
+          "title": "Acts 15",
+          "book": "Queering the Bible: The Book of Acts",
+          "author": "Guthrie Graves-Fitzsimmons",
+          "url": "https://justiceunbound.org/acts-15/"
+        },
+        {
+          "type": "Article",
+          "title": "Acts 16",
+          "book": "Queering the Bible: The Book of Acts",
+          "author": "Chris Greenough",
+          "url": "https://justiceunbound.org/acts-16/"
+        },
+        {
+          "type": "Article",
+          "title": "Acts 28",
+          "book": "Queering the Bible: The Book of Acts",
+          "author": "Heather Beamish",
+          "url": "https://justiceunbound.org/acts-28/"
+        }
+      ],
       "stories": [
         {
           "id": "the-promise-of-the-holy-spirit",
