@@ -1,24 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap');
 @import "tailwindcss";
 
 @theme {
   --color-brand-bg: #FDFCFB;
   --color-brand-card: #FFFFFF;
-  --color-brand-text: #1A1A1A;
-  --color-brand-muted: #666666;
-  
-  --color-category-torah: #E0F2FE;
-  --color-category-torah-dot: #3B82F6;
-  
-  --color-category-prophets: #DCFCE7;
-  --color-category-prophets-dot: #22C55E;
-  
-  --color-category-scrolls: #F3E8FF;
-  --color-category-scrolls-dot: #A855F7;
-  
-  --color-category-writings: #FCE7F3;
-  --color-category-writings-dot: #EC4899;
+  --color-brand-text: #3D3847;
+  --color-brand-muted: #716D7A;
 
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --color-category-pentateuch: #FFF1F0;
+  --color-category-pentateuch-dot: #FA5045;
+
+  --color-category-historical: #FFF4F0;
+  --color-category-historical-dot: #FF764A;
+
+  --color-category-writings: #FFFBEB;
+  --color-category-writings-dot: #FFCF3F;
+
+  --color-category-wisdom: #FFF7ED;
+  --color-category-wisdom-dot: #FFC394;
+
+  --color-category-prophets: #F0FDF4;
+  --color-category-prophets-dot: #5EDC56;
+
+  --color-category-deuterocanonical: #FDF4FF;
+  --color-category-deuterocanonical-dot: #AD6DDF;
+
+  --color-category-gospels: #FEF2F2;
+  --color-category-gospels-dot: #FFA9A9;
+
+  --color-category-acts: #F0FDFF;
+  --color-category-acts-dot: #1EB8FC;
+
+  --color-category-pauline: #EEF2FF;
+  --color-category-pauline-dot: #6576F3;
+
+  --color-category-catholic: #FDF2F8;
+  --color-category-catholic-dot: #F27CDB;
+
+  --color-category-apocalypse: #ECFEFF;
+  --color-category-apocalypse-dot: #56DBED;
+
+  --font-sans: "Instrument Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
 }
 
 @layer base {

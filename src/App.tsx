@@ -1,10 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useParams, useNavigate, useSearchParams } from 'react-router-dom';
-import { Search, ChevronRight, ArrowLeft, BookOpen, ExternalLink, Filter, Menu, X } from 'lucide-react';
+import { Search, ChevronRight, ArrowLeft, BookOpen, ExternalLink, Filter, Menu, X, Info } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import contentData from './content.json';
+import logo from './logo.svg';
+import logoSmall from './logo_small.svg';
 
 // --- Utils ---
 function cn(...inputs: ClassValue[]) {
@@ -15,6 +17,7 @@ function cn(...inputs: ClassValue[]) {
 interface Resource {
   type: string;
   title: string;
+  book?: string;
   author?: string;
   url: string;
 }
@@ -30,32 +33,48 @@ interface Story {
 
 interface BibleBook {
   id: string;
+  number: number;
   name: string;
   category: string;
   description: string;
   stories: Story[];
+  resources?: Resource[];
 }
 
 // --- Components ---
 
 const CategoryBadge = ({ category }: { category: string }) => {
   const styles: Record<string, string> = {
-    'Torah': 'bg-category-torah text-category-torah-dot',
-    'Former Prophets': 'bg-category-prophets text-category-prophets-dot',
-    'Five Scrolls': 'bg-category-scrolls text-category-scrolls-dot',
+    'Pentateuch': 'bg-category-pentateuch text-category-pentateuch-dot',
+    'Historical Books': 'bg-category-historical text-category-historical-dot',
     'Writings': 'bg-category-writings text-category-writings-dot',
+    'Wisdom': 'bg-category-wisdom text-category-wisdom-dot',
+    'Prophets': 'bg-category-prophets text-category-prophets-dot',
+    'Deuterocanonical': 'bg-category-deuterocanonical text-category-deuterocanonical-dot',
+    'Gospels': 'bg-category-gospels text-category-gospels-dot',
+    'Acts of Apostles': 'bg-category-acts text-category-acts-dot',
+    'Pauline Epistles': 'bg-category-pauline text-category-pauline-dot',
+    'Catholic Epistles': 'bg-category-catholic text-category-catholic-dot',
+    'Apocalypse': 'bg-category-apocalypse text-category-apocalypse-dot',
   };
 
   const dotStyles: Record<string, string> = {
-    'Torah': 'bg-category-torah-dot',
-    'Former Prophets': 'bg-category-prophets-dot',
-    'Five Scrolls': 'bg-category-scrolls-dot',
+    'Pentateuch': 'bg-category-pentateuch-dot',
+    'Historical Books': 'bg-category-historical-dot',
     'Writings': 'bg-category-writings-dot',
+    'Wisdom': 'bg-category-wisdom-dot',
+    'Prophets': 'bg-category-prophets-dot',
+    'Deuterocanonical': 'bg-category-deuterocanonical-dot',
+    'Gospels': 'bg-category-gospels-dot',
+    'Acts of Apostles': 'bg-category-acts-dot',
+    'Pauline Epistles': 'bg-category-pauline-dot',
+    'Catholic Epistles': 'bg-category-catholic-dot',
+    'Apocalypse': 'bg-category-apocalypse-dot',
   };
 
   return (
     <div className={cn("inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider", styles[category] || 'bg-gray-100 text-gray-500')}>
-      <span className={cn("w-1.5 h-1.5 rounded-full mr-1.5", dotStyles[category] || 'bg-gray-400')} />
+      <span className={cn("w-1 h-1 rounded-full mr-1.5", dotStyles[category] || 'bg-gray-400')} />
       {category}
     </div>
   );
@@ -68,8 +87,11 @@ const Header = () => (
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
     >
-      <h1 className="text-3xl md:text-4xl font-bold leading-tight max-w-2xl">
-        <span className="text-brand-text">Manifold</span> is a free repository of inclusive, queer-affirming, anti-racist, trauma-sensitive study resources on every single story in the Bible.
+      <Link to="/" className="inline-block mb-10">
+        <img src={logo} alt="Manifold Logo" className="h-10 w-auto" />
+      </Link>
+      <h1 className="text-3xl md:text-4xl leading-tight max-w-2xl">
+        A free repository of inclusive, liberating, queer-affirming, anti-racist, trauma-sensitive study resources on every single story in the Christian Bible.
       </h1>
     </motion.div>
   </header>
@@ -79,12 +101,12 @@ const Footer = () => (
   <footer className="py-12 px-6 border-t border-black/5">
     <div className="max-w-5xl mx-auto text-center text-sm text-brand-muted font-medium">
       <p>
-        Currently lovingly supported by{' '}
+        Created by{' '}
         <a
           href="https://zinzy.website"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-brand-text hover:text-blue-600 transition-colors underline decoration-black/10 underline-offset-4"
+          className="text-brand-text hover:text-[#6576F3] transition-colors underline decoration-black/10 underline-offset-4"
         >
           Zinzy Waleson Geene
         </a>
@@ -93,55 +115,103 @@ const Footer = () => (
   </footer>
 );
 
-const SearchBar = ({ value, onChange, view, setView }: { value: string, onChange: (v: string) => void, view: 'books' | 'topics', setView: (v: 'books' | 'topics') => void }) => (
-  <div className="sticky top-0 z-10 bg-brand-bg/80 backdrop-blur-md border-b border-black/5 mb-8">
-    <div className="max-w-5xl mx-auto px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
-      <div className="relative flex-1 max-w-md">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-muted" />
-        <input
-          type="text"
-          placeholder="Type to find a Bible Book"
-          className="w-full pl-10 pr-4 py-2 bg-transparent border-none focus:ring-0 text-sm placeholder:text-brand-muted"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-        />
-      </div>
+const SearchBar = ({ value, onChange, view, setView }: { value: string, onChange: (v: string) => void, view: 'books' | 'topics', setView: (v: 'books' | 'topics') => void }) => {
+  const [isSticky, setIsSticky] = useState(false);
 
-      <div className="flex items-center gap-4 text-sm font-medium">
-        <span className={cn(view === 'books' ? 'text-brand-text' : 'text-brand-muted')}>Books</span>
-        <button
-          onClick={() => setView(view === 'books' ? 'topics' : 'books')}
-          className="relative w-10 h-5 bg-black rounded-full p-1 transition-colors"
-        >
-          <motion.div
-            animate={{ x: view === 'books' ? 0 : 20 }}
-            className="w-3 h-3 bg-white rounded-full"
-          />
-        </button>
-        <span className={cn(view === 'topics' ? 'text-brand-text' : 'text-brand-muted')}>Topics</span>
+  React.useEffect(() => {
+    const handleScroll = () => {
+      setIsSticky(window.scrollY > 300);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  return (
+    <div className={cn(
+      "sticky top-0 z-10 transition-all duration-300 border-b",
+      isSticky ? "bg-brand-bg/95 backdrop-blur-md border-black/10 py-2" : "bg-brand-bg/0 border-transparent py-4"
+    )}>
+      <div className="max-w-5xl mx-auto px-6 my-1">
+        <div className="flex items-center justify-between gap-2 md:gap-4">
+          <div className="flex items-center gap-2 md:gap-6 flex-1 min-w-0">
+            <AnimatePresence>
+              {isSticky && (
+                <motion.div
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Link to="/">
+                    <img src={logoSmall} alt="Manifold" className="h-6 w-auto" />
+                  </Link>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <div className="relative flex-1 min-w-0">
+              <Search className="absolute left-2.5 md:left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 md:w-4 md:h-4 text-brand-muted" />
+              <input
+                type="text"
+                placeholder="Type to find book"
+                className="w-full pl-8 md:pl-10 pr-2 py-2 bg-transparent border-none focus:ring-0 text-xs md:text-sm placeholder:text-brand-muted truncate"
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 md:gap-4 text-[10px] md:text-sm font-medium whitespace-nowrap">
+            <span className={cn(view === 'books' ? 'text-brand-text' : 'text-brand-muted')}>Books</span>
+            <button
+              onClick={() => setView(view === 'books' ? 'topics' : 'books')}
+              className="relative w-10 h-5 bg-[#6576F3] rounded-full p-1 transition-colors"
+            >
+              <motion.div
+                animate={{ x: view === 'books' ? 0 : 20 }}
+                className="w-3 h-3 bg-white rounded-full"
+              />
+            </button>
+            <span className={cn(view === 'topics' ? 'text-brand-text' : 'text-brand-muted')}>Topics</span>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
-const BookCard: React.FC<{ book: BibleBook }> = ({ book }) => (
-  <Link to={`/book/${book.id}`}>
+const BookCard: React.FC<{ book: BibleBook }> = ({ book }) => {
+  const totalStoryResources = book.stories.reduce((acc, s) => acc + s.resources.length, 0);
+  const totalResources = totalStoryResources + (book.resources ? book.resources.length : 0);
+  const isAvailable = (book.resources && book.resources.length > 0) || (book.stories.length > 0 && totalStoryResources > 0);
+
+  const cardContent = (
     <motion.div
-      whileHover={{ y: -4 }}
-      className="bg-brand-card p-6 rounded-2xl border border-black/5 card-shadow h-full flex flex-col"
+      whileHover={isAvailable ? { y: -4 } : undefined}
+      className={cn(
+        "bg-brand-card p-6 rounded-2xl border border-black/5 card-shadow h-full flex flex-col transition-all",
+        !isAvailable && "grayscale opacity-50 cursor-not-allowed"
+      )}
     >
       <div className="mb-4">
         <CategoryBadge category={book.category} />
       </div>
-      <h3 className="text-2xl font-bold mb-2">{book.name}</h3>
-      <div className="mt-auto flex items-center gap-4 text-[11px] text-brand-muted uppercase tracking-wider font-semibold">
-        <span>{book.stories.length} Bible stories</span>
-        <span className="w-1 h-1 bg-brand-muted/30 rounded-full" />
-        <span>{book.stories.reduce((acc, s) => acc + s.resources.length, 0)} resources</span>
+      <h3 className="text-xl font-semibold mb-2">{book.name}</h3>
+      <div className="mt-auto flex items-center gap-4  text-[10px] text-brand-muted uppercase tracking-wider font-semibold">
+        <span>{book.stories.length} stories</span>
+        <span>{totalResources} resources</span>
       </div>
     </motion.div>
-  </Link>
-);
+  );
+
+  if (!isAvailable) return cardContent;
+
+  return (
+    <Link to={`/book/${book.id}`}>
+      {cardContent}
+    </Link>
+  );
+};
 
 // --- Pages ---
 
@@ -164,10 +234,12 @@ const HomePage = () => {
   };
 
   const filteredBooks = useMemo(() => {
-    return (contentData.books as BibleBook[]).filter(b =>
-      b.name.toLowerCase().includes(search.toLowerCase()) ||
-      b.category.toLowerCase().includes(search.toLowerCase())
-    );
+    return (contentData.books as BibleBook[])
+      .filter(b =>
+        b.name.toLowerCase().includes(search.toLowerCase()) ||
+        b.category.toLowerCase().includes(search.toLowerCase())
+      )
+      .sort((a, b) => a.number - b.number);
   }, [search]);
 
   const themesMap = useMemo(() => {
@@ -189,6 +261,18 @@ const HomePage = () => {
     );
   }, [themesMap, search]);
 
+  const [bookSort, setBookSort] = useState<'by_book' | 'by_availability'>('by_book');
+
+  const availableBooks = useMemo(() => filteredBooks.filter(b => {
+    const totalStoryResources = b.stories.reduce((acc, s) => acc + s.resources.length, 0);
+    return (b.resources && b.resources.length > 0) || (b.stories.length > 0 && totalStoryResources > 0);
+  }), [filteredBooks]);
+
+  const unavailableBooks = useMemo(() => filteredBooks.filter(b => {
+    const totalStoryResources = b.stories.reduce((acc, s) => acc + s.resources.length, 0);
+    return !((b.resources && b.resources.length > 0) || (b.stories.length > 0 && totalStoryResources > 0));
+  }), [filteredBooks]);
+
   return (
     <div className="min-h-screen pb-20">
       <Header />
@@ -202,11 +286,51 @@ const HomePage = () => {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20 }}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+              className="space-y-6"
             >
-              {filteredBooks.map((book) => (
-                <BookCard key={book.id} book={book} />
-              ))}
+              <div className="flex items-center gap-2 bg-brand-card p-1 rounded-lg w-fit border border-black/5 card-shadow mb-8">
+                <button
+                  onClick={() => setBookSort('by_book')}
+                  className={cn("flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors", bookSort === 'by_book' ? "bg-white shadow-sm text-brand-text" : "text-brand-muted hover:text-brand-text")}
+                >
+                  <BookOpen className="w-4 h-4" />
+                  By book
+                </button>
+                <button
+                  onClick={() => setBookSort('by_availability')}
+                  className={cn("flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors", bookSort === 'by_availability' ? "bg-white shadow-sm text-brand-text" : "text-brand-muted hover:text-brand-text")}
+                >
+                  <Filter className="w-4 h-4" />
+                  By availability
+                </button>
+              </div>
+
+              {bookSort === 'by_book' ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {filteredBooks.map((book) => (
+                    <BookCard key={book.id} book={book} />
+                  ))}
+                </div>
+              ) : (
+                <div className="space-y-12">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {availableBooks.map((book) => (
+                      <BookCard key={book.id} book={book} />
+                    ))}
+                  </div>
+
+                  {unavailableBooks.length > 0 && (
+                    <div>
+                      <h2 className="text-xl font-semibold mb-6">No resources yet</h2>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {unavailableBooks.map((book) => (
+                          <BookCard key={book.id} book={book} />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </motion.div>
           ) : (
             <motion.div
@@ -214,12 +338,12 @@ const HomePage = () => {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
-              className="space-y-12"
+              className="space-y-12 mt-6"
             >
               {sortedThemes.length > 0 ? (
                 sortedThemes.map(theme => (
                   <section key={theme}>
-                    <h2 className="text-xs font-bold uppercase tracking-widest text-brand-muted mb-6 border-b border-black/5 pb-2">
+                    <h2 className="text-xs font-semibold uppercase tracking-widest text-brand-muted mb-6 border-b border-black/5 pb-2">
                       {theme} ({themesMap[theme].length})
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -227,12 +351,12 @@ const HomePage = () => {
                         <Link key={`${bookId}-${story.id}`} to={`/book/${bookId}/story/${story.id}`}>
                           <div className="group bg-brand-card p-4 rounded-xl border border-black/5 card-shadow hover:border-black/20 transition-all flex items-center justify-between">
                             <div>
-                              <div className="text-[10px] font-bold text-brand-muted uppercase tracking-wider mb-1">
+                              <div className="text-[10px] font-semibold text-brand-muted uppercase tracking-wider mb-1">
                                 {bookName} · {story.reference}
                               </div>
-                              <h4 className="font-bold group-hover:text-blue-600 transition-colors">{story.title}</h4>
+                              <h4 className="font-semibold group-hover:text-[#6576F3] transition-colors">{story.title}</h4>
                             </div>
-                            <ChevronRight className="w-4 h-4 text-brand-muted group-hover:text-blue-600 transition-colors" />
+                            <ChevronRight className="w-4 h-4 text-brand-muted group-hover:text-[#6576F3] transition-colors" />
                           </div>
                         </Link>
                       ))}
@@ -242,7 +366,7 @@ const HomePage = () => {
               ) : (
                 <div className="bg-brand-card p-12 rounded-3xl border border-black/5 card-shadow text-center">
                   <Filter className="w-12 h-12 text-brand-muted/20 mx-auto mb-4" />
-                  <h2 className="text-2xl font-bold mb-2">No themes found</h2>
+                  <h2 className="text-2xl font-semibold mb-2">No themes found</h2>
                   <p className="text-brand-muted max-w-md mx-auto">
                     Try searching for something else or switch back to the Books view.
                   </p>
@@ -263,19 +387,67 @@ const BookDetailPage = () => {
 
   if (!book) return <div>Book not found</div>;
 
+  const availableStories = useMemo(() => book.stories.filter(s => s.resources.length > 0), [book.stories]);
+  const unavailableStories = useMemo(() => book.stories.filter(s => s.resources.length === 0), [book.stories]);
+
+  const hasBookResources = book.resources && book.resources.length > 0;
+  const initialSort = hasBookResources && availableStories.length === 0 ? 'about_book' : 'by_story';
+
+  const [storySort, setStorySort] = useState<'by_story' | 'by_availability' | 'about_book'>(
+    initialSort
+  );
+
+  const renderStory = (story: Story) => {
+    const hasResources = story.resources.length > 0;
+    const storyContent = (
+      <div className={cn(
+        "group bg-brand-card p-4 md:p-6 rounded-xl border border-black/5 card-shadow flex flex-col md:flex-row md:items-center gap-4 transition-all mb-3",
+        hasResources ? "hover:border-black/20" : "grayscale opacity-50 cursor-not-allowed"
+      )}>
+        <div className="w-24 text-[11px] font-semibold text-brand-muted uppercase tracking-wider">
+          {story.reference}
+        </div>
+        <div className="flex-1">
+          <h4 className="font-semibold text-lg group-hover:text-[#6576F3] transition-colors">{story.title}</h4>
+          {story.themes && story.themes.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-1">
+              {story.themes.map(theme => (
+                <span key={theme} className="text-[9px] font-semibold uppercase tracking-wider text-brand-muted/60">
+                  #{theme}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+        <div className="flex-1 text-sm text-brand-muted italic">
+          {story.summary}
+        </div>
+        {hasResources && (
+          <ChevronRight className="w-5 h-5 text-brand-muted opacity-0 group-hover:opacity-100 transition-opacity hidden md:block" />
+        )}
+      </div>
+    );
+
+    if (!hasResources) return <div key={story.id}>{storyContent}</div>;
+
+    return (
+      <Link key={story.id} to={`/book/${book.id}/story/${story.id}`}>
+        {storyContent}
+      </Link>
+    );
+  };
+
   return (
     <div className="min-h-screen pb-20">
       <div className="max-w-5xl mx-auto px-6 pt-12">
-        <button
-          onClick={() => navigate('/')}
-          className="flex items-center gap-2 text-xs font-semibold text-brand-muted hover:text-brand-text transition-colors mb-8 uppercase tracking-wider"
-        >
-          <ArrowLeft className="w-3 h-3" />
-          Back to the Manifold Index
-        </button>
+        <div className="flex items-center gap-3 mb-12">
+          <Link to="/">
+            <img src={logoSmall} alt="Manifold" className="h-6 w-auto" />
+          </Link>
+        </div>
 
         <div className="flex items-center gap-4 mb-4">
-          <h1 className="text-4xl font-bold">{book.name}</h1>
+          <h1 className="text-4xl font-semibold">{book.name}</h1>
           <CategoryBadge category={book.category} />
         </div>
 
@@ -283,33 +455,89 @@ const BookDetailPage = () => {
           {book.description}
         </p>
 
-        <div className="space-y-3">
-          {book.stories.map((story) => (
-            <Link key={story.id} to={`/book/${book.id}/story/${story.id}`}>
-              <div className="group bg-brand-card p-4 md:p-6 rounded-xl border border-black/5 card-shadow flex flex-col md:flex-row md:items-center gap-4 hover:border-black/20 transition-all mb-3">
-                <div className="w-24 text-[11px] font-semibold text-brand-muted uppercase tracking-wider">
-                  {story.reference}
-                </div>
-                <div className="flex-1">
-                  <h4 className="font-bold text-lg group-hover:text-blue-600 transition-colors">{story.title}</h4>
-                  {story.themes && story.themes.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mt-1">
-                      {story.themes.map(theme => (
-                        <span key={theme} className="text-[9px] font-bold uppercase tracking-wider text-brand-muted/60">
-                          #{theme}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-                <div className="flex-1 text-sm text-brand-muted italic">
-                  {story.summary}
-                </div>
-                <ChevronRight className="w-5 h-5 text-brand-muted opacity-0 group-hover:opacity-100 transition-opacity hidden md:block" />
-              </div>
-            </Link>
-          ))}
+        <div className="flex items-center gap-2 bg-brand-card p-1 rounded-lg w-fit border border-black/5 card-shadow mb-8">
+          <button
+            onClick={() => setStorySort('by_story')}
+            className={cn("flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors", storySort === 'by_story' ? "bg-white shadow-sm text-brand-text" : "text-brand-muted hover:text-brand-text")}
+          >
+            <BookOpen className="w-4 h-4" />
+            By story
+          </button>
+          <button
+            onClick={() => setStorySort('by_availability')}
+            className={cn("flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors", storySort === 'by_availability' ? "bg-white shadow-sm text-brand-text" : "text-brand-muted hover:text-brand-text")}
+          >
+            <Filter className="w-4 h-4" />
+            By availability
+          </button>
+          {hasBookResources && (
+            <button
+              onClick={() => setStorySort('about_book')}
+              className={cn("flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors", storySort === 'about_book' ? "bg-white shadow-sm text-brand-text" : "text-brand-muted hover:text-brand-text")}
+            >
+              <Info className="w-4 h-4" />
+              About the book
+            </button>
+          )}
         </div>
+
+        {storySort === 'about_book' && book.resources && book.resources.length > 0 ? (
+          <div className="space-y-8">
+            <section>
+              <h2 className="text-xs font-semibold uppercase tracking-widest text-brand-muted mb-6 border-b border-black/5 pb-2">
+                Study Resources ({book.resources.length})
+              </h2>
+              <div className="grid gap-4">
+                {book.resources.map((res, i) => (
+                  <a
+                    key={i}
+                    href={res.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group bg-brand-card p-6 rounded-2xl border border-black/5 card-shadow flex items-start justify-between hover:border-black/20 transition-all"
+                  >
+                    <div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 bg-gray-100 text-gray-500 rounded">
+                          {res.type}
+                        </span>
+                      </div>
+                      <h3 className="text-lg font-semibold group-hover:text-[#6576F3] transition-colors">{res.title}</h3>
+                      {res.author && (
+                        <p className="text-sm text-brand-muted mt-1">
+                          by {res.author}
+                          {res.book && <span> in <span className="italic">{res.book}</span></span>}
+                        </p>
+                      )}
+                    </div>
+                    <ExternalLink className="w-4 h-4 text-brand-muted group-hover:text-[#6576F3] transition-colors mt-1" />
+                  </a>
+                ))}
+              </div>
+            </section>
+          </div>
+        ) : storySort === 'by_story' ? (
+          <div className="space-y-3">
+            {book.stories.map(renderStory)}
+          </div>
+        ) : (
+          <div className="space-y-12">
+            {availableStories.length > 0 && (
+              <div className="space-y-3">
+                {availableStories.map(renderStory)}
+              </div>
+            )}
+
+            {unavailableStories.length > 0 && (
+              <div>
+                <h2 className="text-xl font-semibold mb-6">No resources yet</h2>
+                <div className="space-y-3">
+                  {unavailableStories.map(renderStory)}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -326,21 +554,26 @@ const StoryDetailPage = () => {
   return (
     <div className="min-h-screen pb-20">
       <div className="max-w-3xl mx-auto px-6 pt-12">
-        <button
-          onClick={() => navigate(`/book/${book.id}`)}
-          className="flex items-center gap-2 text-xs font-semibold text-brand-muted hover:text-brand-text transition-colors mb-8 uppercase tracking-wider"
-        >
-          <ArrowLeft className="w-3 h-3" />
-          Back to {book.name}
-        </button>
+        <div className="flex items-center gap-3 mb-12">
+          <Link to="/">
+            <img src={logoSmall} alt="Manifold" className="h-6 w-auto" />
+          </Link>
+          <div className="w-px h-4 bg-black/10 mx-1" />
+          <button
+            onClick={() => navigate(`/book/${book.id}`)}
+            className="text-[10px] font-semibold text-brand-muted hover:text-brand-text transition-colors uppercase tracking-widest"
+          >
+            {book.name}
+          </button>
+        </div>
 
         <div className="mb-12">
           <div className="flex items-center gap-3 mb-2">
-            <span className="text-xs font-bold text-brand-muted uppercase tracking-widest">{story.reference}</span>
+            <span className="text-xs font-semibold text-brand-muted uppercase tracking-widest">{story.reference}</span>
             <span className="w-1 h-1 bg-brand-muted/30 rounded-full" />
             <CategoryBadge category={book.category} />
           </div>
-          <h1 className="text-5xl font-bold mb-6">{story.title}</h1>
+          <h1 className="text-5xl font-semibold mb-6">{story.title}</h1>
           <p className="text-xl text-brand-muted italic leading-relaxed mb-8">
             {story.summary}
           </p>
@@ -351,7 +584,7 @@ const StoryDetailPage = () => {
                 <Link
                   key={theme}
                   to={`/?q=${encodeURIComponent(theme)}&view=topics`}
-                  className="px-3 py-1 bg-black/5 rounded-full text-[10px] font-bold uppercase tracking-widest text-brand-muted hover:bg-black/10 hover:text-brand-text transition-all"
+                  className="px-3 py-1 bg-black/5 rounded-full text-[10px] font-semibold uppercase tracking-widest text-brand-muted hover:bg-black/10 hover:text-brand-text transition-all"
                 >
                   {theme}
                 </Link>
@@ -362,7 +595,7 @@ const StoryDetailPage = () => {
 
         <div className="space-y-8">
           <section>
-            <h2 className="text-xs font-bold uppercase tracking-widest text-brand-muted mb-6 border-b border-black/5 pb-2">
+            <h2 className="text-xs font-semibold uppercase tracking-widest text-brand-muted mb-6 border-b border-black/5 pb-2">
               Study Resources ({story.resources.length})
             </h2>
 
@@ -378,14 +611,19 @@ const StoryDetailPage = () => {
                   >
                     <div>
                       <div className="flex items-center gap-2 mb-2">
-                        <span className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 bg-gray-100 text-gray-500 rounded">
+                        <span className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 bg-gray-100 text-gray-500 rounded">
                           {res.type}
                         </span>
                       </div>
-                      <h3 className="text-lg font-bold group-hover:text-blue-600 transition-colors">{res.title}</h3>
-                      {res.author && <p className="text-sm text-brand-muted mt-1">by {res.author}</p>}
+                      <h3 className="text-lg font-semibold group-hover:text-[#6576F3] transition-colors">{res.title}</h3>
+                      {res.author && (
+                        <p className="text-sm text-brand-muted mt-1">
+                          by {res.author}
+                          {res.book && <span> in <span className="italic">{res.book}</span></span>}
+                        </p>
+                      )}
                     </div>
-                    <ExternalLink className="w-4 h-4 text-brand-muted group-hover:text-blue-600 transition-colors mt-1" />
+                    <ExternalLink className="w-4 h-4 text-brand-muted group-hover:text-[#6576F3] transition-colors mt-1" />
                   </a>
                 ))}
               </div>
