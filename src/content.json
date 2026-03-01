@@ -484,28 +484,40 @@
           "themes": [],
           "resources": [
             {
-              "type": "Article",
-              "title": "Joseph’s Womb: Gender Complexity in the Story of Joseph",
-              "author": "Rabbi Irwin Keller",
-              "url": "https://evolve.reconstructingjudaism.org/josephs-womb-gender-complexity-in-the-story-of-joseph/"
+              "type": "Hymn",
+              "title": "Young Joseph The Dreamer",
+              "author": "Carolyn Winfrey Gillette",
+              "url": "https://progressivechristianity.org/resource/young-joseph-the-dreamer/",
+              "themes": [
+                "Immigration"
+              ]
             },
             {
               "type": "Article",
               "title": "Joseph: Queer Coded and Empire-Aligned",
               "author": "Beth Bailey",
-              "url": "https://www.stclementschurch.ca/blog/joseph-queer-coded-and-empire-aligned"
+              "url": "https://www.stclementschurch.ca/blog/joseph-queer-coded-and-empire-aligned",
+              "themes": [
+                "Queerdom"
+              ]
             },
             {
               "type": "Article",
               "title": "Queer Scripture Reflection: Fabulous Joseph",
               "author": "Lewis Eggleston",
-              "url": "https://www.elm.org/2022/11/17/queer-scripture-reflection-fabulous-joseph-by-deacon-lewis-eggleston/"
+              "url": "https://www.elm.org/2022/11/17/queer-scripture-reflection-fabulous-joseph-by-deacon-lewis-eggleston/",
+              "themes": [
+                "Queerdom"
+              ]
             },
             {
               "type": "Article",
               "title": "Joseph’s Womb: Gender Complexity in the Story of Joseph",
               "author": "Rabbi Irwin Keller",
-              "url": "https://evolve.reconstructingjudaism.org/josephs-womb-gender-complexity-in-the-story-of-joseph/"
+              "url": "https://evolve.reconstructingjudaism.org/josephs-womb-gender-complexity-in-the-story-of-joseph/",
+              "themes": [
+                "Queerdom"
+              ]
             }
           ]
         },
@@ -539,7 +551,17 @@
           "reference": "Gen. 39:1–23",
           "summary": "",
           "themes": [],
-          "resources": []
+          "resources": [
+            {
+              "type": "Academic paper",
+              "title": "A Reappropriation of the Joseph Story in Genesis 39 and Surah 12 for Contemporary Race-Discourse",
+              "author": "Cyril Orji",
+              "url": "https://www.cambridge.org/core/journals/horizons/article/reappropriation-of-the-joseph-story-in-genesis-39-and-surah-12-for-contemporary-racediscourse/ED36DE311EBDDFAAF6E5CF461EC36545",
+              "themes": [
+                "Race"
+              ]
+            }
+          ]
         },
         {
           "id": "gen-40-1-23",
@@ -9571,9 +9593,7 @@
           "title": "John the Baptist Prepares the Way",
           "reference": "Luke 3:1–22",
           "summary": "",
-          "themes": [
-            "..."
-          ],
+          "themes": [],
           "resources": [
             {
               "type": "Devotion",
@@ -10454,7 +10474,17 @@
           "reference": "John 3:1–21",
           "summary": "",
           "themes": [],
-          "resources": []
+          "resources": [
+            {
+              "type": "Sermon",
+              "title": "Born From Above",
+              "author": "Sara Irwin",
+              "url": "https://www.episcopalchurch.org/sermon/born-from-above-lent-2-a-march-1-2026/",
+              "themes": [
+                "Divine inclusivity"
+              ]
+            }
+          ]
         },
         {
           "id": "john-3-22-36",

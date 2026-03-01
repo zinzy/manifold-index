@@ -1,11 +1,11 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useParams, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
-import { Search, ChevronRight, ArrowLeft, BookOpen, ExternalLink, Filter, Menu, X, Info } from 'lucide-react';
+import { Search, ChevronRight, ArrowLeft, BookOpen, ExternalLink, Filter, Menu, X, Info, LogOut } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import contentData from './content.json';
-import logo from './logo.svg';
+import logoMain from './logo.svg';
 import logoSmall from './logo_small.svg';
 
 // --- Utils ---
@@ -20,6 +20,7 @@ interface Resource {
   collection?: string;
   author?: string;
   url: string;
+  themes?: string[];
 }
 
 interface Story {
@@ -80,22 +81,59 @@ const CategoryBadge = ({ category }: { category: string }) => {
   );
 };
 
-const Header = () => (
-  <header className="pt-16 pb-12 px-6 max-w-5xl mx-auto">
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
+const LogoLink = ({ size = 'small' }: { size?: 'small' | 'large' }) => {
+  const location = useLocation();
+  const isFrontPage = location.pathname === '/';
+
+  return (
+    <Link
+      to="/"
+      className="relative flex items-center group isolate"
     >
-      <Link to="/" className="inline-block mb-10">
-        <img src={logo} alt="Manifold Logo" className="h-10 w-auto" />
-      </Link>
-      <h1 className="text-3xl md:text-4xl leading-tight max-w-2xl">
-        A free repository of inclusive, liberating, queer-affirming, anti-racist, trauma-sensitive resources on every single story in the Bible.
-      </h1>
-    </motion.div>
-  </header>
-);
+      {!isFrontPage && (
+        <motion.div
+          initial={{ opacity: 0, x: 2 }}
+          whileHover={{ opacity: 1, x: 0 }}
+          className="absolute -left-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200"
+        >
+          <ArrowLeft className="w-4 h-4 text-brand-muted" />
+        </motion.div>
+      )}
+      <div className={cn(
+        "transition-all duration-200 rounded-xl p-1 border border-transparent",
+        !isFrontPage && "group-hover:border-black/5 group-hover:bg-black/[0.02]"
+      )}>
+        <img
+          src={size === 'large' ? logoMain : logoSmall}
+          alt="Manifold"
+          className={cn(
+            "w-auto transition-all",
+            size === 'large' ? "h-10 md:h-12" : "h-6 md:h-7"
+          )}
+        />
+      </div>
+    </Link>
+  );
+};
+
+const Header = () => {
+  return (
+    <header className="pt-16 pb-12 px-6 max-w-5xl mx-auto">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
+        <div className="mb-10 inline-block">
+          <LogoLink size="large" />
+        </div>
+        <h1 className="text-3xl md:text-4xl leading-tight max-w-2xl font-normal text-brand-text">
+          A free repository of inclusive, liberating, queer-affirming, anti-racist, trauma-sensitive resources on every single story in the Bible.
+        </h1>
+      </motion.div>
+    </header>
+  );
+};
 
 const Footer = () => {
   const getOrigin = (url: string) => {
@@ -183,7 +221,23 @@ const Footer = () => {
   );
 };
 
-const SearchBar = ({ value, onChange, view, setView }: { value: string, onChange: (v: string) => void, view: 'books' | 'topics', setView: (v: 'books' | 'topics') => void }) => {
+const SearchBar = ({
+  value,
+  onChange,
+  view,
+  setView,
+  bookSort,
+  setBookSort,
+  showBookSort = false
+}: {
+  value: string,
+  onChange: (v: string) => void,
+  view: 'books' | 'topics',
+  setView: (v: 'books' | 'topics') => void,
+  bookSort?: 'by_book' | 'by_availability',
+  setBookSort?: (s: 'by_book' | 'by_availability') => void,
+  showBookSort?: boolean
+}) => {
   const [isSticky, setIsSticky] = useState(false);
 
   React.useEffect(() => {
@@ -196,51 +250,92 @@ const SearchBar = ({ value, onChange, view, setView }: { value: string, onChange
 
   return (
     <div className={cn(
-      "sticky top-0 z-10 transition-all duration-300 border-b",
-      isSticky ? "bg-brand-bg/95 backdrop-blur-md border-black/10 py-2" : "bg-brand-bg/0 border-transparent py-4"
+      "sticky top-0 z-10 transition-all duration-300 border-b bg-brand-bg/95 backdrop-blur-md",
+      isSticky ? "border-black/10 py-2" : "border-transparent py-4"
     )}>
       <div className="max-w-5xl mx-auto px-6 my-1">
-        <div className="flex items-center justify-between gap-2 md:gap-4">
-          <div className="flex items-center gap-2 md:gap-6 flex-1 min-w-0">
-            <AnimatePresence>
-              {isSticky && (
-                <motion.div
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -10 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Link to="/">
-                    <img src={logoSmall} alt="Manifold" className="h-6 w-auto" />
-                  </Link>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            <div className="relative flex-1 min-w-0">
-              <Search className="absolute left-2.5 md:left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 md:w-4 md:h-4 text-brand-muted" />
-              <input
-                type="text"
-                placeholder="Type to find book"
-                className="w-full pl-8 md:pl-10 pr-2 py-2 bg-transparent border-none focus:ring-0 text-xs md:text-sm placeholder:text-brand-muted truncate"
-                value={value}
-                onChange={(e) => onChange(e.target.value)}
-              />
+        <div className="flex flex-row items-center justify-between gap-2 md:gap-4">
+          {/* Left: Toggles and/or Logo */}
+          {(isSticky || (showBookSort && view === 'books' && bookSort && setBookSort)) && (
+            <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
+              <AnimatePresence mode="popLayout">
+                {isSticky && (
+                  <motion.div
+                    key="logo"
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -10 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <LogoLink size="small" />
+                  </motion.div>
+                )}
+                {showBookSort && view === 'books' && bookSort && setBookSort && (
+                  <motion.div
+                    key="sort"
+                    initial={{ opacity: 0, x: 10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 10 }}
+                    className="flex items-center gap-1 bg-white border border-black/5 p-1 rounded-xl h-10"
+                  >
+                    <button
+                      onClick={() => setBookSort('by_book')}
+                      title="By book"
+                      className={cn(
+                        "flex items-center gap-1.5 px-3 h-full rounded-xl text-sm font-semibold transition-colors cursor-pointer",
+                        bookSort === 'by_book' ? "bg-brand-bg/50 text-[#6576F3]" : "text-brand-muted hover:text-brand-text"
+                      )}
+                    >
+                      <BookOpen className="w-4 h-4" fill={bookSort === 'by_book' ? "currentColor" : "none"} fillOpacity={0.15} />
+                      <span className="hidden lg:inline">By book</span>
+                    </button>
+                    <button
+                      onClick={() => setBookSort('by_availability')}
+                      title="By availability"
+                      className={cn(
+                        "flex items-center gap-1.5 px-3 h-full rounded-xl text-sm font-semibold transition-colors cursor-pointer",
+                        bookSort === 'by_availability' ? "bg-brand-bg/50 text-[#6576F3]" : "text-brand-muted hover:text-brand-text"
+                      )}
+                    >
+                      <Filter className="w-4 h-4" fill={bookSort === 'by_availability' ? "currentColor" : "none"} fillOpacity={0.15} />
+                      <span className="hidden lg:inline">By availability</span>
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
+          )}
+
+          {/* Middle: Left-aligned or Centered Search Input */}
+          <div className={cn(
+            "relative flex-1 max-w-lg w-full transition-all duration-300",
+            view === 'topics' ? "md:ml-0 md:mr-auto" : "mx-2 md:mx-auto"
+          )}>
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-muted" />
+            <input
+              type="text"
+              placeholder={view === 'books' ? "Find book" : "Find topic"}
+              className="w-full h-10 pl-10 pr-4 bg-white border border-black/5 rounded-xl focus:outline-none focus:border-black/20 focus:ring-1 focus:ring-black/10 text-sm font-medium placeholder:text-brand-muted transition-all"
+              value={value}
+              onChange={(e) => onChange(e.target.value)}
+            />
           </div>
 
-          <div className="flex items-center gap-2 md:gap-4 text-[10px] md:text-sm font-medium whitespace-nowrap">
-            <span className={cn(view === 'books' ? 'text-brand-text' : 'text-brand-muted')}>Books</span>
-            <button
-              onClick={() => setView(view === 'books' ? 'topics' : 'books')}
-              className="relative w-10 h-5 bg-[#6576F3] rounded-full p-1 transition-colors"
-            >
-              <motion.div
-                animate={{ x: view === 'books' ? 0 : 20 }}
-                className="w-3 h-3 bg-white rounded-full"
-              />
-            </button>
-            <span className={cn(view === 'topics' ? 'text-brand-text' : 'text-brand-muted')}>Topics</span>
+          {/* Right: View Toggles */}
+          <div className="flex items-center text-sm font-semibold whitespace-nowrap h-10">
+            <div className="flex items-center gap-1 md:gap-2 px-1 md:px-3 h-full">
+              <span className={cn("cursor-default inline transition-colors", view === 'books' ? 'text-brand-text' : 'text-brand-muted')}>Books</span>
+              <button
+                onClick={() => setView(view === 'books' ? 'topics' : 'books')}
+                className="relative w-8 md:w-10 h-4 md:h-5 bg-[#6576F3] rounded-full p-0.5 md:p-1 transition-colors cursor-pointer"
+              >
+                <motion.div
+                  animate={{ x: view === 'books' ? 0 : (window.innerWidth < 768 ? 16 : 20) }}
+                  className="w-3 md:w-3 h-3 md:h-3 bg-white rounded-full"
+                />
+              </button>
+              <span className={cn("cursor-default inline transition-colors", view === 'topics' ? 'text-brand-text' : 'text-brand-muted')}>Topics</span>
+            </div>
           </div>
         </div>
       </div>
@@ -311,15 +406,17 @@ const HomePage = () => {
   }, [search]);
 
   const themesMap = useMemo(() => {
-    const map: Record<string, { bookId: string, bookName: string, story: Story }[]> = {};
+    const map: Record<string, { bookId: string, bookName: string, story: Story, resource: Resource }[]> = {};
     (contentData.books as BibleBook[]).forEach(book => {
       book.stories.forEach(story => {
-        if (story.resources.length > 0) {
-          story.themes?.forEach(theme => {
+        story.resources.forEach(resource => {
+          // If resource has its own themes, use them. Otherwise, inherit from story.
+          const themes = (resource.themes && resource.themes.length > 0) ? resource.themes : (story.themes || []);
+          themes.forEach(theme => {
             if (!map[theme]) map[theme] = [];
-            map[theme].push({ bookId: book.id, bookName: book.name, story });
+            map[theme].push({ bookId: book.id, bookName: book.name, story, resource });
           });
-        }
+        });
       });
     });
     return map;
@@ -343,10 +440,22 @@ const HomePage = () => {
     return !((b.resources && b.resources.length > 0) || (b.stories.length > 0 && totalStoryResources > 0));
   }), [filteredBooks]);
 
+  const otBooks = useMemo(() => filteredBooks.filter(b => b.number >= 1 && b.number <= 39), [filteredBooks]);
+  const deuterocanonBooks = useMemo(() => filteredBooks.filter(b => b.number >= 40 && b.number <= 51), [filteredBooks]);
+  const ntBooks = useMemo(() => filteredBooks.filter(b => b.number >= 52 && b.number <= 78), [filteredBooks]);
+
   return (
     <div className="min-h-screen pb-20">
       <Header />
-      <SearchBar value={search} onChange={setSearch} view={view} setView={setView} />
+      <SearchBar
+        value={search}
+        onChange={setSearch}
+        view={view}
+        setView={setView}
+        bookSort={bookSort}
+        setBookSort={setBookSort}
+        showBookSort={true}
+      />
 
       <main className="max-w-5xl mx-auto px-6">
         <AnimatePresence mode="wait">
@@ -356,51 +465,64 @@ const HomePage = () => {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20 }}
-              className="space-y-6"
+              className="space-y-12"
             >
-              <div className="flex flex-wrap items-center gap-1 sm:gap-2 bg-brand-card p-1 rounded-lg w-full sm:w-fit border border-black/5 card-shadow mb-8">
-                <button
-                  onClick={() => setBookSort('by_book')}
-                  className={cn("flex flex-1 sm:flex-initial justify-center items-center gap-1.5 px-2 sm:px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-colors", bookSort === 'by_book' ? "bg-white shadow-sm text-brand-text" : "text-brand-muted hover:text-brand-text")}
-                >
-                  <BookOpen className="w-4 h-4" />
-                  <span className="truncate">By book</span>
-                </button>
-                <button
-                  onClick={() => setBookSort('by_availability')}
-                  className={cn("flex flex-1 sm:flex-initial justify-center items-center gap-1.5 px-2 sm:px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-colors", bookSort === 'by_availability' ? "bg-white shadow-sm text-brand-text" : "text-brand-muted hover:text-brand-text")}
-                >
-                  <Filter className="w-4 h-4" />
-                  <span className="truncate">By availability</span>
-                </button>
-              </div>
+              {[
+                { title: 'Old Testament', books: otBooks },
+                { title: 'Deuterocanonical', books: deuterocanonBooks },
+                { title: 'New Testament', books: ntBooks }
+              ].map(({ title, books: sectionBooks }) => {
+                if (sectionBooks.length === 0) return null;
 
-              {bookSort === 'by_book' ? (
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
-                  {filteredBooks.map((book) => (
-                    <BookCard key={book.id} book={book} />
-                  ))}
-                </div>
-              ) : (
-                <div className="space-y-12">
-                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
-                    {availableBooks.map((book) => (
-                      <BookCard key={book.id} book={book} />
-                    ))}
-                  </div>
+                const availableInSection = sectionBooks.filter(b => {
+                  const totalStoryResources = b.stories.reduce((acc, s) => acc + s.resources.length, 0);
+                  return (b.resources && b.resources.length > 0) || (b.stories.length > 0 && totalStoryResources > 0);
+                });
 
-                  {unavailableBooks.length > 0 && (
-                    <div>
-                      <h2 className="text-xl font-semibold mb-6">No resources yet</h2>
+                const unavailableInSection = sectionBooks.filter(b => {
+                  const totalStoryResources = b.stories.reduce((acc, s) => acc + s.resources.length, 0);
+                  return !((b.resources && b.resources.length > 0) || (b.stories.length > 0 && totalStoryResources > 0));
+                });
+
+                return (
+                  <section key={title} className="space-y-8">
+                    <h2 className="text-xs font-semibold uppercase tracking-widest text-brand-muted mb-6 border-b border-black/5 pb-2">{title}</h2>
+
+                    {bookSort === 'by_book' ? (
                       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
-                        {unavailableBooks.map((book) => (
+                        {sectionBooks.map((book) => (
                           <BookCard key={book.id} book={book} />
                         ))}
                       </div>
-                    </div>
-                  )}
-                </div>
-              )}
+                    ) : (
+                      <div className="space-y-12">
+                        {availableInSection.length > 0 && (
+                          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+                            {availableInSection.map((book) => (
+                              <BookCard key={book.id} book={book} />
+                            ))}
+                          </div>
+                        )}
+
+                        {unavailableInSection.length > 0 && (
+                          <div>
+                            <h3 className="text-[10px] font-bold uppercase tracking-widest text-brand-muted/40 mb-4 flex items-center gap-2">
+                              <span className="h-px bg-black/5 flex-1" />
+                              No resources yet
+                              <span className="h-px bg-black/5 flex-1" />
+                            </h3>
+                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+                              {unavailableInSection.map((book) => (
+                                <BookCard key={book.id} book={book} />
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </section>
+                );
+              })}
             </motion.div>
           ) : (
             <motion.div
@@ -417,18 +539,36 @@ const HomePage = () => {
                       {theme} ({themesMap[theme].length})
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {themesMap[theme].map(({ bookId, bookName, story }) => (
-                        <Link key={`${bookId}-${story.id}`} to={`/book/${bookId}/story/${story.id}`}>
-                          <div className="group bg-brand-card p-4 rounded-xl border border-black/5 card-shadow hover:border-black/20 transition-all flex items-center justify-between">
-                            <div>
-                              <div className="text-[10px] font-semibold text-brand-muted uppercase tracking-wider mb-1">
-                                {bookName} · {story.reference}
+                      {themesMap[theme].map(({ bookId, bookName, story, resource }) => (
+                        <a key={`${bookId}-${story.id}-${resource.title}`} href={resource.url} target="_blank" rel="noopener noreferrer">
+                          <div className="group bg-brand-card p-4 rounded-xl border border-black/5 card-shadow hover:border-black/20 transition-all">
+                            <div className="flex items-center justify-between gap-4">
+                              <div className="flex-1">
+                                <div className="text-[10px] font-semibold text-[#6576F3] uppercase tracking-wider mb-1">
+                                  {resource.type}
+                                </div>
+                                <h4 className="font-semibold text-brand-text group-hover:text-[#6576F3] transition-colors leading-tight mb-2">
+                                  {resource.title}
+                                </h4>
+                                {resource.author && (
+                                  <div className="text-xs text-brand-muted italic mb-3">
+                                    By {resource.author}
+                                    {resource.collection && ` in ${resource.collection}`}
+                                  </div>
+                                )}
+
+                                <div className="pt-3 border-t border-black/5">
+                                  <div className="flex items-center gap-2 text-[10px] font-medium text-brand-muted">
+                                    <BookOpen className="w-3 h-3" />
+                                    <span>{bookName} · {story.title}</span>
+                                    <span className="opacity-60">{story.reference}</span>
+                                  </div>
+                                </div>
                               </div>
-                              <h4 className="font-semibold group-hover:text-[#6576F3] transition-colors">{story.title}</h4>
+                              <ExternalLink className="w-4 h-4 text-brand-muted group-hover:text-[#6576F3] transition-colors flex-shrink-0" />
                             </div>
-                            <ChevronRight className="w-4 h-4 text-brand-muted group-hover:text-[#6576F3] transition-colors" />
                           </div>
-                        </Link>
+                        </a>
                       ))}
                     </div>
                   </section>
@@ -436,9 +576,9 @@ const HomePage = () => {
               ) : (
                 <div className="bg-brand-card p-12 rounded-3xl border border-black/5 card-shadow text-center">
                   <Filter className="w-12 h-12 text-brand-muted/20 mx-auto mb-4" />
-                  <h2 className="text-2xl font-semibold mb-2">No themes found</h2>
+                  <h2 className="text-xl font-semibold mb-2">No themes found</h2>
                   <p className="text-brand-muted max-w-md mx-auto">
-                    Try searching for something else or switch back to the Books view.
+                    Switch back to the Books view
                   </p>
                 </div>
               )}
@@ -534,18 +674,37 @@ const BookDetailPage = () => {
   const availableStories = useMemo(() => filteredStories.filter(s => s.resources.length > 0), [filteredStories]);
   const unavailableStories = useMemo(() => filteredStories.filter(s => s.resources.length === 0), [filteredStories]);
 
+  const [isToolbarSticky, setIsToolbarSticky] = useState(false);
+
+  React.useEffect(() => {
+    const handleScroll = () => {
+      setIsToolbarSticky(window.scrollY > 400);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const renderStory = (story: Story) => {
     const hasResources = story.resources.length > 0;
     const storyContent = (
       <div className={cn(
-        "group bg-brand-card p-4 md:p-6 rounded-xl border border-black/5 card-shadow flex flex-col md:flex-row md:items-center gap-4 transition-all mb-3",
+        "group bg-brand-card p-4 md:p-6 rounded-xl border border-black/5 flex flex-col md:flex-row md:items-center gap-4 transition-all mb-3",
         hasResources && !showNestedResources ? "hover:border-black/20" : (!hasResources ? "grayscale opacity-50 cursor-not-allowed" : "")
       )}>
         <div className="w-24 text-[11px] font-semibold text-brand-muted uppercase tracking-wider">
           {story.reference}
         </div>
         <div className="flex-1">
-          <h4 className={cn("font-semibold text-lg transition-colors", hasResources && !showNestedResources && "group-hover:text-[#6576F3]")}>{story.title}</h4>
+          <div className="flex items-center gap-3 mb-1">
+            <h4 className={cn("font-semibold text-lg transition-colors", hasResources && !showNestedResources && "group-hover:text-[#6576F3]")}>
+              {story.title}
+            </h4>
+            {hasResources && (
+              <span className="text-[10px] font-semibold h-6 w-6 bg-gray-100 text-gray-500 rounded-full border border-gray-200 flex items-center justify-center">
+                {story.resources.length}
+              </span>
+            )}
+          </div>
           {story.themes && story.themes.length > 0 && (
             <div className="flex flex-wrap gap-2 mt-1">
               {story.themes.map(theme => (
@@ -578,7 +737,7 @@ const BookDetailPage = () => {
                 href={res.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 bg-brand-card p-3 rounded-xl border border-black/5 card-shadow hover:border-black/20 transition-all"
+                className="group flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 bg-brand-card p-3 rounded-xl border border-black/5 hover:border-black/20 transition-all"
               >
                 <div className="flex-shrink-0">
                   <span className="text-[9px] font-semibold uppercase tracking-wider px-1.5 py-0.5 bg-gray-100 text-gray-500 rounded">
@@ -613,9 +772,7 @@ const BookDetailPage = () => {
     <div className="min-h-screen pb-20">
       <div className="max-w-5xl mx-auto px-6 pt-12">
         <div className="flex items-center gap-3 mb-12">
-          <Link to="/">
-            <img src={logoSmall} alt="Manifold" className="h-6 w-auto" />
-          </Link>
+          <LogoLink size="small" />
         </div>
 
         <div className="flex items-center gap-4 mb-4">
@@ -626,72 +783,106 @@ const BookDetailPage = () => {
         <p className="text-2xl text-brand-text/80 max-w-2xl mb-8 leading-relaxed">
           {book.description}
         </p>
+      </div>
 
-        {storySort !== 'about_book' && (
-          <div className="sm:hidden relative w-full mb-8">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-muted" />
-            <input
-              type="text"
-              placeholder="Search by story title or reference"
-              className="w-full pl-10 pr-4 py-2.5 bg-brand-card border border-black/5 rounded-xl focus:outline-none focus:border-black/20 focus:ring-1 focus:ring-black/10 text-sm placeholder:text-brand-muted card-shadow transition-all"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-        )}
+      <div className={cn(
+        "sticky top-0 z-10 transition-all duration-300 border-b bg-brand-bg/95 backdrop-blur-md mb-8",
+        isToolbarSticky ? "border-black/10 py-2" : "border-transparent py-4"
+      )}>
+        <div className="max-w-5xl mx-auto px-6">
+          <div className="flex flex-row items-center justify-between gap-2 md:gap-4">
+            {/* Left: Toggles and Logo */}
+            <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
+              <AnimatePresence mode="popLayout">
+                {isToolbarSticky && (
+                  <motion.div
+                    key="logo"
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -10 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <LogoLink size="small" />
+                  </motion.div>
+                )}
+                <motion.div
+                  key="sort"
+                  initial={{ opacity: 0, x: 10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 10 }}
+                  className="flex flex-wrap items-center gap-1 bg-white border border-black/5 p-1 rounded-xl h-10"
+                >
+                  <button
+                    onClick={() => setStorySort('by_story')}
+                    title="By story"
+                    className={cn(
+                      "flex items-center gap-1.5 px-3 h-full rounded-xl text-sm font-semibold transition-colors cursor-pointer",
+                      storySort === 'by_story' ? "bg-brand-bg/50 text-[#6576F3]" : "text-brand-muted hover:text-brand-text"
+                    )}
+                  >
+                    <BookOpen className="w-4 h-4" fill={storySort === 'by_story' ? "currentColor" : "none"} fillOpacity={0.15} />
+                    <span className="hidden lg:inline">By story</span>
+                  </button>
+                  <button
+                    onClick={() => setStorySort('by_availability')}
+                    title="By availability"
+                    className={cn(
+                      "flex items-center gap-1.5 px-3 h-full rounded-xl text-sm font-semibold transition-colors cursor-pointer",
+                      storySort === 'by_availability' ? "bg-brand-bg/50 text-[#6576F3]" : "text-brand-muted hover:text-brand-text"
+                    )}
+                  >
+                    <Filter className="w-4 h-4" fill={storySort === 'by_availability' ? "currentColor" : "none"} fillOpacity={0.15} />
+                    <span className="hidden lg:inline">By availability</span>
+                  </button>
+                  {hasBookResources && (
+                    <button
+                      onClick={() => setStorySort('about_book')}
+                      title="About the book"
+                      className={cn(
+                        "flex items-center gap-1.5 px-3 h-full rounded-xl text-sm font-semibold transition-colors cursor-pointer",
+                        storySort === 'about_book' ? "bg-brand-bg/50 text-[#6576F3]" : "text-brand-muted hover:text-brand-text"
+                      )}
+                    >
+                      <Info className="w-4 h-4" fill={storySort === 'about_book' ? "currentColor" : "none"} fillOpacity={0.15} />
+                      <span className="hidden lg:inline">About</span>
+                    </button>
+                  )}
+                </motion.div>
+              </AnimatePresence>
+            </div>
 
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-          <div className="flex flex-wrap items-center gap-1 sm:gap-2 bg-brand-card p-1 rounded-lg w-full sm:w-fit border border-black/5 card-shadow">
-            <button
-              onClick={() => setStorySort('by_story')}
-              className={cn("flex flex-1 sm:flex-initial justify-center items-center gap-1.5 px-2 sm:px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-colors", storySort === 'by_story' ? "bg-white shadow-sm text-brand-text" : "text-brand-muted hover:text-brand-text")}
-            >
-              <BookOpen className="w-4 h-4" />
-              <span className="truncate">By story</span>
-            </button>
-            <button
-              onClick={() => setStorySort('by_availability')}
-              className={cn("flex flex-1 sm:flex-initial justify-center items-center gap-1.5 px-2 sm:px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-colors", storySort === 'by_availability' ? "bg-white shadow-sm text-brand-text" : "text-brand-muted hover:text-brand-text")}
-            >
-              <Filter className="w-4 h-4" />
-              <span className="truncate">By availability</span>
-            </button>
-            {hasBookResources && (
-              <button
-                onClick={() => setStorySort('about_book')}
-                className={cn("flex flex-1 sm:flex-initial justify-center items-center gap-1.5 px-2 sm:px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-colors", storySort === 'about_book' ? "bg-white shadow-sm text-brand-text" : "text-brand-muted hover:text-brand-text")}
-              >
-                <Info className="w-4 h-4" />
-                <span className="truncate">About the book</span>
-              </button>
+            {/* Middle: Centered Search */}
+            {storySort !== 'about_book' && (
+              <div className="relative flex-1 max-w-lg mx-2 md:mx-auto w-full">
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-muted" />
+                <input
+                  type="text"
+                  placeholder="Find story or Bible passage"
+                  className="w-full h-10 pl-10 pr-4 bg-white border border-black/5 rounded-xl focus:outline-none focus:border-black/20 focus:ring-1 focus:ring-black/10 text-sm font-medium placeholder:text-brand-muted transition-all"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+            )}
+
+            {/* Right: Switch */}
+            {storySort !== 'about_book' && (
+              <div className="flex items-center h-10">
+                <label className="flex items-center gap-2 md:gap-3 cursor-pointer h-full px-1 md:px-3">
+                  <div className="relative">
+                    <input type="checkbox" className="sr-only" checked={showNestedResources} onChange={() => setShowNestedResources(!showNestedResources)} />
+                    <div className={cn("block w-8 md:w-10 h-4 md:h-6 rounded-full transition-colors", showNestedResources ? "bg-[#6576F3]" : "bg-black/20")} />
+                    <div className={cn("absolute left-1 top-0.5 md:top-1 bg-white w-3 md:w-4 h-3 md:h-4 rounded-full transition-transform", showNestedResources ? "translate-x-4" : "translate-x-0")} />
+                  </div>
+                  <span className="text-sm font-semibold text-brand-muted hidden sm:inline">Nested resources</span>
+                </label>
+              </div>
             )}
           </div>
-
-          {storySort !== 'about_book' && (
-            <div className="hidden sm:flex flex-1 mx-4 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-muted" />
-              <input
-                type="text"
-                placeholder="Search by title or reference (e.g. Gen 1:2)"
-                className="w-full pl-10 pr-4 py-2 bg-brand-card border border-black/5 rounded-xl focus:outline-none focus:border-black/20 focus:ring-1 focus:ring-black/10 text-sm placeholder:text-brand-muted card-shadow transition-all"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-          )}
-
-          {storySort !== 'about_book' && (
-            <label className="flex items-center gap-3 cursor-pointer">
-              <span className="text-sm font-medium text-brand-muted">Show nested resources</span>
-              <div className="relative">
-                <input type="checkbox" className="sr-only" checked={showNestedResources} onChange={() => setShowNestedResources(!showNestedResources)} />
-                <div className={cn("block w-10 h-6 rounded-full transition-colors", showNestedResources ? "bg-[#6576F3]" : "bg-black/20")} />
-                <div className={cn("absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform", showNestedResources ? "translate-x-4" : "translate-x-0")} />
-              </div>
-            </label>
-          )}
         </div>
+      </div>
 
+      <main className="max-w-5xl mx-auto px-6">
         {storySort === 'about_book' ? (
           book.resources && book.resources.length > 0 ? (
             <div className="space-y-8">
@@ -762,7 +953,7 @@ const BookDetailPage = () => {
             )}
           </div>
         ) : null}
-      </div>
+      </main>
     </div>
   );
 };
@@ -779,9 +970,7 @@ const StoryDetailPage = () => {
     <div className="min-h-screen pb-20">
       <div className="max-w-3xl mx-auto px-6 pt-12">
         <div className="flex items-center gap-3 mb-12">
-          <Link to="/">
-            <img src={logoSmall} alt="Manifold" className="h-6 w-auto" />
-          </Link>
+          <LogoLink size="small" />
           <div className="w-px h-4 bg-black/10 mx-1" />
           <button
             onClick={() => navigate(`/book/${book.id}`)}
