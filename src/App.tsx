@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useParams, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
-import { Search, ChevronRight, ArrowLeft, BookOpen, ExternalLink, Filter, Menu, X, Info, LogOut } from 'lucide-react';
+import { Search, ChevronRight, ArrowLeft, BookOpen, ExternalLink, Filter, Menu, X, Info, LogOut, MousePointerClick } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -117,21 +117,77 @@ const LogoLink = ({ size = 'small' }: { size?: 'small' | 'large' }) => {
 };
 
 const Header = () => {
+  const [isWipOpen, setIsWipOpen] = useState(false);
+
   return (
-    <header className="pt-16 pb-12 px-6 max-w-5xl mx-auto">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-      >
-        <div className="mb-10 inline-block">
-          <LogoLink size="large" />
-        </div>
-        <h1 className="text-3xl md:text-4xl leading-tight max-w-2xl font-normal text-brand-text">
-          A free repository of inclusive, liberating, queer-affirming, anti-racist, trauma-sensitive resources on every single story in the Bible
-        </h1>
-      </motion.div>
-    </header>
+    <>
+      <header className="pt-16 pb-12 px-6 max-w-5xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <div className="mb-10 inline-block relative">
+            <LogoLink size="large" />
+            <motion.div
+              onClick={() => setIsWipOpen(true)}
+              initial={{ rotate: 8 }}
+              whileHover={{
+                scale: 1.15,
+                rotate: -4,
+                transition: { type: "spring", stiffness: 400, damping: 10 }
+              }}
+              className="absolute -top-4 -right-8 md:-right-10 bg-yellow-200 text-yellow-900 border border-yellow-900/20 text-[10px] md:text-xs font-black px-2 py-0.5 shadow-sm origin-bottom-left cursor-pointer"
+              style={{
+                fontFamily: '"Marker Felt", "Comic Sans MS", "Chalkboard SE", sans-serif',
+                borderRadius: '255px 15px 225px 15px/15px 225px 15px 255px'
+              }}
+            >
+              WIP
+            </motion.div>
+          </div>
+          <h1 className="text-3xl md:text-4xl leading-tight max-w-2xl font-normal text-brand-text">
+            A free repository of inclusive, liberating, queer-affirming, anti-racist, trauma-sensitive resources on every single story in the Bible
+          </h1>
+        </motion.div>
+      </header>
+
+      <AnimatePresence>
+        {isWipOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsWipOpen(false)}
+              className="absolute inset-0 bg-white/80 backdrop-blur-sm cursor-pointer"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl border border-black/5 overflow-hidden"
+            >
+              <div className="p-8 pb-6">
+                <div className="mb-8">
+                  <h2 className="text-xl font-semibold text-gray-900 mb-3 tracking-tight">This is a work in progress</h2>
+                  <p className="text-gray-600 leading-relaxed text-sm">The Manifold Index is a passion project by <a href="https://zinzy.website" target="_blank" rel="noopener noreferrer">Zinzy Waleson Geene</a>, and is updated at her convenience.</p>
+                </div>
+                {/* <div className="flex justify-end">
+                  <a href="https://zinzy.website" target="_blank" rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-6 py-2.5 bg-[#6576F3] text-white rounded-xl font-medium text-sm hover:bg-[#5260c7] transition-colors focus:outline-none focus:ring-4 focus:ring-[#6576F3]/20"
+                  >
+                    <MousePointerClick className="w-4 h-4" />
+                    More about this project
+                  </a>
+                </div> */}
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 
@@ -179,7 +235,7 @@ const Footer = () => {
       {domains.length > 0 && (
         <div className="max-w-5xl mx-auto mb-16">
           <h2 className="text-xs font-semibold text-brand-muted uppercase tracking-widest mb-6 text-center border-b border-black/5 pb-4">
-            Sources & Organizations
+            Frequently-used sources
           </h2>
           <div className="flex flex-wrap justify-center gap-3">
             {domains.map(([hostname, origin]) => (
@@ -628,7 +684,8 @@ const BookDetailPage = () => {
   if (!book) return <div>Book not found</div>;
 
   const hasBookResources = book.resources && book.resources.length > 0;
-  const initialSort = hasBookResources && book.stories.filter(s => s.resources.length > 0).length === 0 ? 'about_book' : 'by_story';
+  const hasAnyStoryResources = book.stories.some(s => s.resources.length > 0);
+  const initialSort = hasBookResources && !hasAnyStoryResources ? 'about_book' : 'by_story';
 
   const [storySort, setStorySort] = useState<'by_story' | 'by_availability' | 'about_book'>(
     initialSort
@@ -893,18 +950,21 @@ const BookDetailPage = () => {
 
               {!isToolbarSticky && (
                 <div className="flex items-center gap-3 md:hidden">
-                  <span className="text-sm font-semibold text-brand-muted whitespace-nowrap">Nested resources</span>
+                  <span className={cn("text-sm font-semibold whitespace-nowrap", hasAnyStoryResources ? "text-brand-muted" : "text-brand-muted/50")}>Nested resources</span>
                   <button
                     onClick={() => setShowNestedResources(!showNestedResources)}
+                    disabled={!hasAnyStoryResources}
                     className={cn(
-                      "group relative inline-flex h-5 w-10 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none",
-                      showNestedResources ? "bg-[#6576F3]" : "bg-black/10"
+                      "group relative inline-flex h-5 w-10 flex-shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none",
+                      !hasAnyStoryResources ? "bg-black/5 cursor-not-allowed" : "cursor-pointer",
+                      hasAnyStoryResources && showNestedResources ? "bg-[#6576F3]" : (hasAnyStoryResources ? "bg-black/10" : "")
                     )}
                   >
                     <span
                       className={cn(
                         "pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out",
-                        showNestedResources ? "translate-x-5" : "translate-x-0"
+                        showNestedResources ? "translate-x-5" : "translate-x-0",
+                        !hasAnyStoryResources && "opacity-50"
                       )}
                     />
                   </button>
@@ -932,18 +992,21 @@ const BookDetailPage = () => {
               )}
               {!isToolbarSticky && storySort !== 'about_book' && (
                 <div className="hidden md:flex items-center gap-3">
-                  <span className="text-sm font-semibold text-brand-muted whitespace-nowrap">Nested resources</span>
+                  <span className={cn("text-sm font-semibold whitespace-nowrap", hasAnyStoryResources ? "text-brand-muted" : "text-brand-muted/50")}>Nested resources</span>
                   <button
                     onClick={() => setShowNestedResources(!showNestedResources)}
+                    disabled={!hasAnyStoryResources}
                     className={cn(
-                      "group relative inline-flex h-5 w-10 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none",
-                      showNestedResources ? "bg-[#6576F3]" : "bg-black/10"
+                      "group relative inline-flex h-5 w-10 flex-shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none",
+                      !hasAnyStoryResources ? "bg-black/5 cursor-not-allowed" : "cursor-pointer",
+                      hasAnyStoryResources && showNestedResources ? "bg-[#6576F3]" : (hasAnyStoryResources ? "bg-black/10" : "")
                     )}
                   >
                     <span
                       className={cn(
                         "pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out",
-                        showNestedResources ? "translate-x-5" : "translate-x-0"
+                        showNestedResources ? "translate-x-5" : "translate-x-0",
+                        !hasAnyStoryResources && "opacity-50"
                       )}
                     />
                   </button>
