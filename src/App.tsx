@@ -1,9 +1,10 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useParams, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
-import { Search, ChevronRight, ArrowLeft, BookOpen, ExternalLink, Filter, Menu, X, Info, LogOut, MousePointerClick, Sun, Moon, Monitor } from 'lucide-react';
+import { Search, ChevronRight, ArrowLeft, BookOpen, ExternalLink, Filter, Menu, X, Info, LogOut, MousePointerClick, Sun, Moon, Monitor, Calendar } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { getDailyReadings } from './lib/lectionary';
 import contentData from './content.json';
 import logoMainLight from './logo.svg';
 import logoMainDark from './logo_dark.svg';
@@ -102,16 +103,21 @@ export const useTheme = () => {
 };
 
 const ThemeToggle = () => {
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, resolvedTheme } = useTheme();
 
   const pos = theme === 'light' ? 0 : theme === 'system' ? 1 : 2;
+  const isDark = resolvedTheme === 'dark';
 
   return (
     <div className="flex items-center gap-3">
       <span className={cn("text-[10px] font-bold uppercase tracking-widest transition-colors", theme === 'light' ? 'text-brand-text' : 'text-brand-muted')}>Light</span>
 
       <div
-        className="relative inline-flex h-7 w-16 rounded-full bg-black/5 dark:bg-white/10 p-1 cursor-pointer card-shadow"
+        className={cn(
+          "flex items-center h-7 w-16 rounded-full border px-1 cursor-pointer card-shadow transition-all",
+          isDark ? "border-transparent" : "bg-black/5 border-transparent"
+        )}
+        style={{ backgroundColor: isDark ? 'rgba(255, 255, 255, 0.15)' : '' }}
         onClick={() => {
           if (theme === 'light') setTheme('system');
           else if (theme === 'system') setTheme('dark');
@@ -121,7 +127,7 @@ const ThemeToggle = () => {
       >
         <motion.div
           animate={{ x: pos * 18 }}
-          className="absolute h-5 w-5 rounded-full bg-white dark:bg-brand-bg shadow flex items-center justify-center top-1"
+          className="h-5 w-5 rounded-full bg-white dark:bg-brand-bg shadow flex items-center justify-center"
           transition={{ type: "spring", stiffness: 500, damping: 30 }}
         >
           {theme === 'light' ? <Sun className="w-3 h-3 text-amber-500" /> :
@@ -211,12 +217,14 @@ const LogoLink = ({ size = 'small' }: { size?: 'small' | 'large' }) => {
   );
 };
 
+
+
 const Header = () => {
   const [isWipOpen, setIsWipOpen] = useState(false);
 
   return (
     <>
-      <header className="pt-14 md:pt-16 pb-12 px-6 max-w-5xl mx-auto relative">
+      <header className="pt-8 md:pt-16 pb-12 px-6 max-w-5xl mx-auto relative">
         <div className="absolute top-4 right-6 md:top-6">
           <ThemeToggle />
         </div>
@@ -225,7 +233,7 @@ const Header = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <div className="mb-10 inline-block relative">
+          <div className="mt-32 mb-10 inline-block relative">
             <LogoLink size="large" />
             <motion.div
               onClick={() => setIsWipOpen(true)}
@@ -328,8 +336,27 @@ const Footer = () => {
     .sort((a, b) => a[0].localeCompare(b[0]))
     .map(([hostname, data]) => [hostname, data.origin]);
 
+  let totalStories = 0;
+  let totalResources = 0;
+  let storiesWithResources = 0;
+
+  (contentData.books as BibleBook[]).forEach(book => {
+    if (book.resources) {
+      totalResources += book.resources.length;
+    }
+    book.stories.forEach(story => {
+      totalStories++;
+      if (story.resources && story.resources.length > 0) {
+        storiesWithResources++;
+        totalResources += story.resources.length;
+      }
+    });
+  });
+
+  const coveragePercentage = totalStories > 0 ? Math.round((storiesWithResources / totalStories) * 100) : 0;
+
   return (
-    <footer className="py-12 md:py-16 px-6 border-t border-black/5 mt-12">
+    <footer className="py-6 md:py-8 px-6 border-t border-black/5 mt-12">
       {domains.length > 0 && (
         <div className="max-w-5xl mx-auto mb-16">
           <h2 className="text-xs font-semibold text-brand-muted uppercase tracking-widest mb-6 text-center border-b border-black/5 pb-4">
@@ -359,6 +386,28 @@ const Footer = () => {
       )}
 
       <div className="max-w-5xl mx-auto text-center text-sm text-brand-muted font-medium">
+        {(import.meta as any).env.DEV && (
+          <div className="mb-12 mt-6 p-6 rounded-xl bg-brand-card/50 border border-black/5 text-left max-w-sm mx-auto">
+            <h3 className="text-xs font-semibold uppercase tracking-widest text-[#6576F3] mb-4">Local Dev Stats</h3>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center text-brand-text">
+                <span className="text-brand-muted">Total Stories</span>
+                <span className="font-semibold">{totalStories}</span>
+              </div>
+              <div className="flex justify-between items-center text-brand-text">
+                <span className="text-brand-muted">Total Resources</span>
+                <span className="font-semibold">{totalResources}</span>
+              </div>
+              <div className="flex justify-between items-center text-brand-text">
+                <span className="text-brand-muted">Coverage</span>
+                <span className="font-semibold">{coveragePercentage}% ({storiesWithResources})</span>
+              </div>
+              <div className="w-full bg-black/5 dark:bg-white/20 rounded-full h-2 mt-2 truncate">
+                <div className="bg-[#6576F3] h-2 rounded-full transition-all duration-500" style={{ width: `${coveragePercentage}%` }} />
+              </div>
+            </div>
+          </div>
+        )}
         <p>
           Created by{' '}
           <a
@@ -388,11 +437,13 @@ const SearchBar = ({
   onChange: (v: string) => void,
   view: 'books' | 'topics',
   setView: (v: 'books' | 'topics') => void,
-  bookSort?: 'by_book' | 'by_availability',
-  setBookSort?: (s: 'by_book' | 'by_availability') => void,
+  bookSort?: 'by_book' | 'by_availability' | 'readings',
+  setBookSort?: (s: 'by_book' | 'by_availability' | 'readings') => void,
   showBookSort?: boolean
 }) => {
   const [isSticky, setIsSticky] = useState(false);
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === 'dark';
 
   React.useEffect(() => {
     const handleScroll = () => {
@@ -439,7 +490,7 @@ const SearchBar = ({
                       title="By book"
                       className={cn(
                         "flex items-center gap-1.5 px-3 h-full rounded-xl text-sm font-semibold transition-colors cursor-pointer",
-                        bookSort === 'by_book' ? "bg-brand-bg/50 text-[#6576F3]" : "text-brand-muted hover:text-brand-text"
+                        bookSort === 'by_book' ? (isDark ? "bg-brand-bg/50 text-white" : "bg-brand-bg/50 text-[#6576F3]") : "text-brand-muted hover:text-brand-text"
                       )}
                     >
                       <BookOpen className="w-4 h-4" fill={bookSort === 'by_book' ? "currentColor" : "none"} fillOpacity={0.15} />
@@ -450,11 +501,22 @@ const SearchBar = ({
                       title="By availability"
                       className={cn(
                         "flex items-center gap-1.5 px-3 h-full rounded-xl text-sm font-semibold transition-colors cursor-pointer",
-                        bookSort === 'by_availability' ? "bg-brand-bg/50 text-[#6576F3]" : "text-brand-muted hover:text-brand-text"
+                        bookSort === 'by_availability' ? (isDark ? "bg-brand-bg/50 text-white" : "bg-brand-bg/50 text-[#6576F3]") : "text-brand-muted hover:text-brand-text"
                       )}
                     >
                       <Filter className="w-4 h-4" fill={bookSort === 'by_availability' ? "currentColor" : "none"} fillOpacity={0.15} />
                       <span className="hidden sm:inline">By availability</span>
+                    </button>
+                    <button
+                      onClick={() => setBookSort('readings')}
+                      title="Readings"
+                      className={cn(
+                        "flex items-center gap-1.5 px-3 h-full rounded-xl text-sm font-semibold transition-colors cursor-pointer",
+                        bookSort === 'readings' ? (isDark ? "bg-brand-bg/50 text-white" : "bg-brand-bg/50 text-[#6576F3]") : "text-brand-muted hover:text-brand-text"
+                      )}
+                    >
+                      <Calendar className="w-4 h-4" fill={bookSort === 'readings' ? "currentColor" : "none"} fillOpacity={0.15} />
+                      <span className="hidden sm:inline">Readings</span>
                     </button>
                   </motion.div>
                 )}
@@ -468,7 +530,7 @@ const SearchBar = ({
                   onClick={() => setView(view === 'books' ? 'topics' : 'books')}
                   className={cn(
                     "group relative inline-flex h-5 w-10 flex-shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none cursor-pointer",
-                    view === 'topics' ? "bg-[#6576F3]" : "bg-[#6576F3]/50"
+                    view === 'topics' ? "bg-[#F27CDB]" : "bg-[#6576F3]"
                   )}
                 >
                   <span
@@ -502,28 +564,26 @@ const SearchBar = ({
                 onChange={(e) => onChange(e.target.value)}
               />
             </div>
-            {!isSticky && (
-              <div className="hidden md:flex items-center text-sm font-semibold whitespace-nowrap h-10">
-                <div className="flex items-center gap-1 md:gap-2 px-1 md:px-3 h-full">
-                  <span className={cn("cursor-default inline transition-colors", view === 'books' ? 'text-brand-text' : 'text-brand-muted')}>Books</span>
-                  <button
-                    onClick={() => setView(view === 'books' ? 'topics' : 'books')}
+            <div className="hidden md:flex items-center text-sm font-semibold whitespace-nowrap h-10">
+              <div className="flex items-center gap-1 md:gap-2 px-1 md:px-3 h-full">
+                <span className={cn("cursor-default inline transition-colors", view === 'books' ? 'text-brand-text' : 'text-brand-muted')}>Books</span>
+                <button
+                  onClick={() => setView(view === 'books' ? 'topics' : 'books')}
+                  className={cn(
+                    "group relative inline-flex h-5 w-10 flex-shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none cursor-pointer",
+                    view === 'topics' ? "bg-[#F27CDB]" : "bg-[#6576F3]"
+                  )}
+                >
+                  <span
                     className={cn(
-                      "group relative inline-flex h-5 w-10 flex-shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none cursor-pointer",
-                      view === 'topics' ? "bg-[#6576F3]" : "bg-[#6576F3]/50"
+                      "pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out",
+                      view === 'topics' ? "translate-x-5" : "translate-x-0"
                     )}
-                  >
-                    <span
-                      className={cn(
-                        "pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out",
-                        view === 'topics' ? "translate-x-5" : "translate-x-0"
-                      )}
-                    />
-                  </button>
-                  <span className={cn("cursor-default inline transition-colors", view === 'topics' ? 'text-brand-text' : 'text-brand-muted')}>Topics</span>
-                </div>
+                  />
+                </button>
+                <span className={cn("cursor-default inline transition-colors", view === 'topics' ? 'text-brand-text' : 'text-brand-muted')}>Topics</span>
               </div>
-            )}
+            </div>
           </div>
         </div>
       </div>
@@ -566,6 +626,113 @@ const BookCard: React.FC<{ book: BibleBook }> = ({ book }) => {
 
 // --- Pages ---
 
+const ReadingsView = () => {
+  const { title, psalms, lessons } = getDailyReadings(new Date());
+
+  const matchedStories = useMemo(() => {
+    const stories: { story: Story, bookId: string }[] = [];
+    const allBooks = contentData.books as BibleBook[];
+
+    // Parse chapter from a reference string like "Gen. 1:1-2:3" or "John 12:44-50"
+    const parseChapter = (ref: string): number | null => {
+      const match = ref.match(/(\d+):/);
+      return match ? parseInt(match[1], 10) : null;
+    };
+
+    const normalizeBookName = (name: string) => name.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+    allBooks.forEach(b => {
+      const bName = normalizeBookName(b.name);
+      // Find lessons or psalms that apply to this book
+      const relevantReadings = [...lessons, ...psalms].filter(r => {
+        const rName = normalizeBookName(r.split(/\d/)[0]); // Get prefix before numbers
+        return rName.includes(bName) || bName.includes(rName); // E.g., '1 cor' matches '1 corinthians'
+      });
+
+      if (relevantReadings.length > 0) {
+        b.stories.forEach(s => {
+          if (s.resources.length > 0) {
+            const storyChapter = parseChapter(s.reference);
+            // Consider it a match if any relevant reading shares the same chapter
+            const isMatch = relevantReadings.some(r => {
+              const readingChapter = parseChapter(r);
+              return storyChapter !== null && readingChapter !== null && storyChapter === readingChapter;
+            });
+
+            if (isMatch) {
+              stories.push({ story: s, bookId: b.id });
+            }
+          }
+        });
+      }
+    });
+    return stories;
+  }, [lessons, psalms]);
+
+  return (
+    <div className="space-y-12">
+      <section className="my-12">
+        <h2 className="text-xl md:text-2xl font-semibold font-sans text-brand-text mb-2 text-center tracking-tight">Daily Office Readings</h2>
+        {title && <h3 className="text-sm font-semibold text-brand-muted text-center mb-4 uppercase tracking-wider">{title}</h3>}
+        <div className="flex flex-col items-center gap-6 pt-10">
+          {psalms.length > 0 && (
+            <div className="text-center">
+              <span className="block text-xs font-semibold text-brand-muted uppercase tracking-widest mb-2">Psalms</span>
+              <div className="flex flex-wrap justify-center gap-2">
+                {psalms.map(p => <span key={p} className="px-3 py-1 bg-brand-card dark:bg-brand-card border border-black/5 rounded-full text-sm font-medium">{p}</span>)}
+              </div>
+            </div>
+          )}
+          {lessons.length > 0 && (
+            <div className="text-center">
+              <span className="block text-xs font-semibold text-brand-muted uppercase tracking-widest mb-2">Lessons</span>
+              <div className="flex flex-wrap justify-center gap-2">
+                {lessons.map(l => <span key={l} className="px-3 py-1 bg-brand-card dark:bg-brand-card border border-black/5 rounded-full text-sm font-medium">{l}</span>)}
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {matchedStories.length > 0 ? (
+        <section>
+          <h2 className="text-xs font-semibold uppercase tracking-widest text-brand-muted mb-6 border-b border-black/5 pb-2">
+            Related Stories ({matchedStories.length})
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {matchedStories.map(({ story, bookId }) => (
+              <Link
+                key={story.id}
+                to={`/book/${bookId}`}
+                className="group bg-brand-card p-4 rounded-xl border border-black/5 flex flex-col hover:border-black/20 transition-all cursor-pointer"
+              >
+                <div className="text-[11px] font-semibold text-brand-muted uppercase tracking-wider mb-2">
+                  {story.reference}
+                </div>
+                <div className="flex items-center gap-3 mb-1">
+                  <h4 className="font-semibold text-lg group-hover:text-[#6576F3] transition-colors truncate">
+                    {story.title}
+                  </h4>
+                  <span className="text-[10px] font-semibold h-5 w-5 bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-200 rounded-full border border-gray-200 flex items-center justify-center shrink-0">
+                    {story.resources.length}
+                  </span>
+                </div>
+                <div className="text-sm text-brand-muted italic mt-1 line-clamp-2">
+                  {story.summary}
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      ) : (
+        <div className="text-center text-brand-muted text-sm mt-4">
+          No related stories with resources found for today's readings.
+        </div>
+      )}
+    </div>
+  );
+};
+
 const HomePage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const search = searchParams.get('q') || '';
@@ -594,20 +761,39 @@ const HomePage = () => {
   }, [search]);
 
   const themesMap = useMemo(() => {
-    const map: Record<string, { bookId: string, bookName: string, story: Story, resource: Resource }[]> = {};
+    const map: Record<string, Record<string, { resource: Resource, references: { bookName: string, storyTitle: string, storyRef: string }[] }>> = {};
     (contentData.books as BibleBook[]).forEach(book => {
       book.stories.forEach(story => {
         story.resources.forEach(resource => {
           // If resource has its own themes, use them. Otherwise, inherit from story.
           const themes = (resource.themes && resource.themes.length > 0) ? resource.themes : (story.themes || []);
           themes.forEach(theme => {
-            if (!map[theme]) map[theme] = [];
-            map[theme].push({ bookId: book.id, bookName: book.name, story, resource });
+            if (!map[theme]) map[theme] = {};
+            const key = resource.url || resource.title; // Group by URL, fallback to title
+
+            if (!map[theme][key]) {
+              map[theme][key] = { resource, references: [] };
+            }
+
+            // Only add reference if it doesn't already exist for this resource (avoid exact duplicate refs)
+            const refExists = map[theme][key].references.some(r => r.storyRef === story.reference);
+            if (!refExists) {
+              map[theme][key].references.push({
+                bookName: book.name,
+                storyTitle: story.title,
+                storyRef: story.reference
+              });
+            }
           });
         });
       });
     });
-    return map;
+
+    const finalMap: Record<string, { resource: Resource, references: { bookName: string, storyTitle: string, storyRef: string }[] }[]> = {};
+    Object.keys(map).forEach(theme => {
+      finalMap[theme] = Object.values(map[theme]);
+    });
+    return finalMap;
   }, []);
 
   const sortedThemes = useMemo(() => {
@@ -616,7 +802,13 @@ const HomePage = () => {
     );
   }, [themesMap, search]);
 
-  const [bookSort, setBookSort] = useState<'by_book' | 'by_availability'>('by_book');
+  const hasAnyStoryResourcesGlobal = useMemo(() => {
+    return (contentData.books as BibleBook[]).some(b => b.stories.some(s => s.resources.length > 0));
+  }, []);
+
+  const [bookSort, setBookSort] = useState<'by_book' | 'by_availability' | 'readings'>(
+    hasAnyStoryResourcesGlobal ? 'by_availability' : 'by_book'
+  );
 
   const availableBooks = useMemo(() => filteredBooks.filter(b => {
     const totalStoryResources = b.stories.reduce((acc, s) => acc + s.resources.length, 0);
@@ -638,7 +830,7 @@ const HomePage = () => {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
       transition={{ duration: 0.3 }}
-      className="min-h-screen pb-20"
+      className="min-h-screen pb-4"
     >
       <Header />
       <SearchBar
@@ -661,46 +853,49 @@ const HomePage = () => {
               exit={{ opacity: 0, x: 20 }}
               className="space-y-12"
             >
-              {[
-                { title: 'Old Testament', books: otBooks },
-                { title: 'Deuterocanonical', books: deuterocanonBooks },
-                { title: 'New Testament', books: ntBooks }
-              ].map(({ title, books: sectionBooks }) => {
-                if (sectionBooks.length === 0) return null;
+              {bookSort === 'readings' ? (
+                <ReadingsView />
+              ) : (
+                [
+                  { title: 'Old Testament', books: otBooks },
+                  { title: 'Deuterocanonical', books: deuterocanonBooks },
+                  { title: 'New Testament', books: ntBooks }
+                ].map(({ title, books: sectionBooks }) => {
+                  if (sectionBooks.length === 0) return null;
 
-                const availableInSection = sectionBooks.filter(b => {
-                  const totalStoryResources = b.stories.reduce((acc, s) => acc + s.resources.length, 0);
-                  return (b.resources && b.resources.length > 0) || (b.stories.length > 0 && totalStoryResources > 0);
-                });
+                  const availableInSection = sectionBooks.filter(b => {
+                    const totalStoryResources = b.stories.reduce((acc, s) => acc + s.resources.length, 0);
+                    return (b.resources && b.resources.length > 0) || (b.stories.length > 0 && totalStoryResources > 0);
+                  });
 
-                if (bookSort === 'by_availability' && availableInSection.length === 0) {
-                  return null;
-                }
+                  if (bookSort === 'by_availability' && availableInSection.length === 0) {
+                    return null;
+                  }
 
-                const displayedCount = bookSort === 'by_book' ? sectionBooks.length : availableInSection.length;
+                  const displayedCount = bookSort === 'by_book' ? sectionBooks.length : availableInSection.length;
 
-                return (
-                  <section key={title} className="space-y-6">
-                    <h2 className="text-xs font-semibold uppercase tracking-widest text-brand-muted mb-6 border-b border-black/5 pb-2">
-                      {title} ({displayedCount})
-                    </h2>
+                  return (
+                    <section key={title} className="space-y-6">
+                      <h2 className="text-xs font-semibold uppercase tracking-widest text-brand-muted mb-6 border-b border-black/5 pb-2">
+                        {title} ({displayedCount})
+                      </h2>
 
-                    {bookSort === 'by_book' ? (
-                      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
-                        {sectionBooks.map((book) => (
-                          <BookCard key={book.id} book={book} />
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
-                        {availableInSection.map((book) => (
-                          <BookCard key={book.id} book={book} />
-                        ))}
-                      </div>
-                    )}
-                  </section>
-                );
-              })}
+                      {bookSort === 'by_book' ? (
+                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+                          {sectionBooks.map((book) => (
+                            <BookCard key={book.id} book={book} />
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+                          {availableInSection.map((book) => (
+                            <BookCard key={book.id} book={book} />
+                          ))}
+                        </div>
+                      )}
+                    </section>
+                  );
+                }))}
 
               {bookSort === 'by_availability' && unavailableBooks.length > 0 && (
                 <section className="mt-16 pt-8">
@@ -729,11 +924,11 @@ const HomePage = () => {
                     <h2 className="text-xs font-semibold uppercase tracking-widest text-brand-muted mb-6 border-b border-black/5 pb-2">
                       {theme} ({themesMap[theme].length})
                     </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {themesMap[theme].map(({ bookId, bookName, story, resource }) => (
-                        <a key={`${bookId}-${story.id}-${resource.title}`} href={resource.url} target="_blank" rel="noopener noreferrer">
-                          <div className="group bg-brand-card p-4 rounded-xl border border-black/5 card-shadow hover:border-black/20 transition-all">
-                            <div className="flex items-center justify-between gap-4">
+                    <div className="columns-1 md:columns-2 lg:columns-3 gap-4">
+                      {themesMap[theme].map(({ resource, references }) => (
+                        <a key={resource.url || resource.title} href={resource.url} target="_blank" rel="noopener noreferrer" className="block break-inside-avoid mb-4">
+                          <div className="group bg-brand-card p-4 rounded-xl border border-black/5 card-shadow hover:border-black/20 transition-all h-full flex flex-col">
+                            <div className="flex items-start justify-between gap-4 mb-4">
                               <div className="flex-1">
                                 <div className="text-[10px] font-semibold text-[#6576F3] uppercase tracking-wider mb-1">
                                   {resource.type}
@@ -742,21 +937,22 @@ const HomePage = () => {
                                   {resource.title}
                                 </h4>
                                 {resource.author && (
-                                  <div className="text-xs text-brand-muted italic mb-3">
+                                  <div className="text-xs text-brand-muted italic">
                                     By {resource.author}
                                     {resource.collection && ` in ${resource.collection}`}
                                   </div>
                                 )}
-
-                                <div className="pt-3 border-t border-black/5">
-                                  <div className="flex items-center gap-2 text-[10px] font-medium text-brand-muted">
-                                    <BookOpen className="w-3 h-3" />
-                                    <span>{bookName} · {story.title}</span>
-                                    <span className="opacity-60">{story.reference}</span>
-                                  </div>
-                                </div>
                               </div>
-                              <ExternalLink className="w-4 h-4 text-brand-muted group-hover:text-[#6576F3] transition-colors flex-shrink-0" />
+                              <ExternalLink className="w-4 h-4 text-brand-muted group-hover:text-[#6576F3] transition-colors flex-shrink-0 mt-1" />
+                            </div>
+
+                            <div className="pt-3 border-t border-black/5 flex flex-col gap-1.5 mt-auto">
+                              {references.map((ref, idx) => (
+                                <div key={idx} className="flex items-start gap-2 text-[10px] font-medium text-brand-muted">
+                                  <BookOpen className="w-3 h-3 flex-shrink-0 mt-0.5" />
+                                  <span className="leading-tight">{ref.bookName} · {ref.storyTitle} <span className="opacity-60">{ref.storyRef}</span></span>
+                                </div>
+                              ))}
                             </div>
                           </div>
                         </a>
@@ -790,13 +986,16 @@ const BookDetailPage = () => {
 
   const hasBookResources = book.resources && book.resources.length > 0;
   const hasAnyStoryResources = book.stories.some(s => s.resources.length > 0);
-  const initialSort = hasBookResources && !hasAnyStoryResources ? 'about_book' : 'by_story';
+  const initialSort = hasBookResources && !hasAnyStoryResources
+    ? 'about_book'
+    : hasAnyStoryResources ? 'by_availability' : 'by_story';
 
   const [storySort, setStorySort] = useState<'by_story' | 'by_availability' | 'about_book'>(
     initialSort
   );
   const [showNestedResources, setShowNestedResources] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const { resolvedTheme } = useTheme();
 
   const filteredStories = useMemo(() => {
     if (!searchQuery.trim()) return book.stories;
@@ -892,7 +1091,7 @@ const BookDetailPage = () => {
               {story.title}
             </h4>
             {hasResources && (
-              <span className="text-[10px] font-semibold h-6 w-6 bg-gray-100 text-gray-500 rounded-full border border-gray-200 flex items-center justify-center">
+              <span className="text-[10px] font-semibold h-6 w-6 bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-200 rounded-full border border-gray-200 flex items-center justify-center">
                 {story.resources.length}
               </span>
             )}
@@ -1022,7 +1221,7 @@ const BookDetailPage = () => {
                       title="By story"
                       className={cn(
                         "flex items-center gap-1.5 px-3 h-full rounded-xl text-sm font-semibold transition-colors cursor-pointer",
-                        storySort === 'by_story' ? "bg-brand-bg/50 text-[#6576F3]" : "text-brand-muted hover:text-brand-text"
+                        storySort === 'by_story' ? (resolvedTheme === 'dark' ? "bg-brand-bg/50 text-white" : "bg-brand-bg/50 text-[#6576F3]") : "text-brand-muted hover:text-brand-text"
                       )}
                     >
                       <BookOpen className="w-4 h-4" fill={storySort === 'by_story' ? "currentColor" : "none"} fillOpacity={0.15} />
@@ -1033,7 +1232,7 @@ const BookDetailPage = () => {
                       title="By availability"
                       className={cn(
                         "flex items-center gap-1.5 px-3 h-full rounded-xl text-sm font-semibold transition-colors cursor-pointer",
-                        storySort === 'by_availability' ? "bg-brand-bg/50 text-[#6576F3]" : "text-brand-muted hover:text-brand-text"
+                        storySort === 'by_availability' ? (resolvedTheme === 'dark' ? "bg-brand-bg/50 text-white" : "bg-brand-bg/50 text-[#6576F3]") : "text-brand-muted hover:text-brand-text"
                       )}
                     >
                       <Filter className="w-4 h-4" fill={storySort === 'by_availability' ? "currentColor" : "none"} fillOpacity={0.15} />
@@ -1045,7 +1244,7 @@ const BookDetailPage = () => {
                         title="About the book"
                         className={cn(
                           "flex items-center gap-1.5 px-3 h-full rounded-xl text-sm font-semibold transition-colors cursor-pointer",
-                          storySort === 'about_book' ? "bg-brand-bg/50 text-[#6576F3]" : "text-brand-muted hover:text-brand-text"
+                          storySort === 'about_book' ? (resolvedTheme === 'dark' ? "bg-brand-bg/50 text-white" : "bg-brand-bg/50 text-[#6576F3]") : "text-brand-muted hover:text-brand-text"
                         )}
                       >
                         <Info className="w-4 h-4" fill={storySort === 'about_book' ? "currentColor" : "none"} fillOpacity={0.15} />
@@ -1224,7 +1423,7 @@ const StoryDetailPage = () => {
           <div className="w-px h-4 bg-black/10 mx-1" />
           <button
             onClick={() => navigate(`/book/${book.id}`)}
-            className="text-[10px] font-semibold text-brand-muted hover:text-brand-text transition-colors uppercase tracking-widest"
+            className="text-[10px] font-semibold text-brand-muted hover:text-brand-text transition-colors uppercase tracking-widest cursor-pointer"
           >
             {book.name}
           </button>

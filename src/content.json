@@ -44,6 +44,16 @@
                 "Trauma",
                 "Gender"
               ]
+            },
+            {
+              "type": "Sermon",
+              "title": "LGBT: We are Imago Dei",
+              "author": "ProgressiveChristianity.org",
+              "url": "https://progressivechristianity.org/resource/sermon-starter-lgbt-we-are-imago-dei/",
+              "themes": [
+                "Queerdom",
+                "God's image"
+              ]
             }
           ]
         },
@@ -84,6 +94,14 @@
           "title": "Increasing Corruption on Earth",
           "reference": "Gen. 6:1–8",
           "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "gen-6-9–9-29",
+          "title": "The Story of Noah",
+          "reference": "Gen. 6:9–9:29",
+          "summary": "On God's covenant with Noah",
           "themes": [],
           "resources": []
         },
@@ -299,9 +317,20 @@
           "id": "gen-24-1-67",
           "title": "Isaac and Rebekah",
           "reference": "Gen. 24:1–67",
-          "summary": "",
+          "summary": "On trust, obedience, and God’s providence",
           "themes": [],
-          "resources": []
+          "resources": [
+            {
+              "type": "Sermon",
+              "title": "LGBT: The Bible is Not a Sex Manual",
+              "author": "ProgressiveChristianity.org",
+              "url": "https://progressivechristianity.org/resource/sermon-starter-lgbt-the-bible-is-not-a-sex-manual/",
+              "themes": [
+                "Queerdom",
+                "God's image"
+              ]
+            }
+          ]
         },
         {
           "id": "gen-25-1-11",
@@ -361,16 +390,35 @@
         },
         {
           "id": "gen-27-1-40",
-          "title": "Jacob Steals Esau's Blessing",
+          "title": "Isaac Blesses Jacob",
           "reference": "Gen. 27:1–40",
+          "summary": "On deception, loss, and the cost of favouritism",
+          "themes": [],
+          "resources": [
+            {
+              "type": "Sermon",
+              "title": "LGBT: The Bible is Not a Sex Manual",
+              "author": "ProgressiveChristianity.org",
+              "url": "https://progressivechristianity.org/resource/sermon-starter-lgbt-the-bible-is-not-a-sex-manual/",
+              "themes": [
+                "Queerdom",
+                "God's image"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "gen-28-1-5",
+          "title": "Jacob Sent to Laban",
+          "reference": "Gen. 28:1-5",
           "summary": "",
           "themes": [],
           "resources": []
         },
         {
-          "id": "gen-27-41-28-9",
-          "title": "Jacob Flees to Laban",
-          "reference": "Gen. 27:41–28:9",
+          "id": "gen-28-6-9",
+          "title": "Esau Marries an Ishmaelite",
+          "reference": "Gen. 28:6-9",
           "summary": "",
           "themes": [],
           "resources": []
@@ -569,7 +617,7 @@
               "author": "Cyril Orji",
               "url": "https://www.cambridge.org/core/journals/horizons/article/reappropriation-of-the-joseph-story-in-genesis-39-and-surah-12-for-contemporary-racediscourse/ED36DE311EBDDFAAF6E5CF461EC36545",
               "themes": [
-                "Race"
+                "Racism"
               ]
             }
           ]
@@ -2463,7 +2511,18 @@
           "reference": "Deut. 21:1–23:25",
           "summary": "",
           "themes": [],
-          "resources": []
+          "resources": [
+            {
+              "type": "Sermon",
+              "title": "LGBT: The Bible is Not a Sex Manual",
+              "author": "ProgressiveChristianity.org",
+              "url": "https://progressivechristianity.org/resource/sermon-starter-lgbt-the-bible-is-not-a-sex-manual/",
+              "themes": [
+                "Queerdom",
+                "God's image"
+              ]
+            }
+          ]
         },
         {
           "id": "deut-24-1-5",
@@ -5576,41 +5635,1212 @@
       "description": "Songs and prayers of the people of God.",
       "stories": [
         {
-          "id": "ps-1-41",
-          "title": "Book One (Psalms 1–41)",
-          "reference": "Ps. 1–41",
+          "id": "ps-1",
+          "title": "Psalm 1",
+          "reference": "Ps. 1",
           "summary": "",
           "themes": [],
           "resources": []
         },
         {
-          "id": "ps-42-72",
-          "title": "Book Two (Psalms 42–72)",
-          "reference": "Ps. 42–72",
+          "id": "ps-2",
+          "title": "Psalm 2",
+          "reference": "Ps. 2",
           "summary": "",
           "themes": [],
           "resources": []
         },
         {
-          "id": "ps-73-89",
-          "title": "Book Three (Psalms 73–89)",
-          "reference": "Ps. 73–89",
+          "id": "ps-3",
+          "title": "Psalm 3",
+          "reference": "Ps. 3",
           "summary": "",
           "themes": [],
           "resources": []
         },
         {
-          "id": "ps-90-106",
-          "title": "Book Four (Psalms 90–106)",
-          "reference": "Ps. 90–106",
+          "id": "ps-4",
+          "title": "Psalm 4",
+          "reference": "Ps. 4",
           "summary": "",
           "themes": [],
           "resources": []
         },
         {
-          "id": "ps-107-150",
-          "title": "Book Five (Psalms 107–150)",
-          "reference": "Ps. 107–150",
+          "id": "ps-5",
+          "title": "Psalm 5",
+          "reference": "Ps. 5",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-6",
+          "title": "Psalm 6",
+          "reference": "Ps. 6",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-7",
+          "title": "Psalm 7",
+          "reference": "Ps. 7",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-8",
+          "title": "Psalm 8",
+          "reference": "Ps. 8",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-9",
+          "title": "Psalm 9",
+          "reference": "Ps. 9",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-10",
+          "title": "Psalm 10",
+          "reference": "Ps. 10",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-11",
+          "title": "Psalm 11",
+          "reference": "Ps. 11",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-12",
+          "title": "Psalm 12",
+          "reference": "Ps. 12",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-13",
+          "title": "Psalm 13",
+          "reference": "Ps. 13",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-14",
+          "title": "Psalm 14",
+          "reference": "Ps. 14",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-15",
+          "title": "Psalm 15",
+          "reference": "Ps. 15",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-16",
+          "title": "Psalm 16",
+          "reference": "Ps. 16",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-17",
+          "title": "Psalm 17",
+          "reference": "Ps. 17",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-18",
+          "title": "Psalm 18",
+          "reference": "Ps. 18",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-19",
+          "title": "Psalm 19",
+          "reference": "Ps. 19",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-20",
+          "title": "Psalm 20",
+          "reference": "Ps. 20",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-21",
+          "title": "Psalm 21",
+          "reference": "Ps. 21",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-22",
+          "title": "Psalm 22",
+          "reference": "Ps. 22",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-23",
+          "title": "Psalm 23",
+          "reference": "Ps. 23",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-24",
+          "title": "Psalm 24",
+          "reference": "Ps. 24",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-25",
+          "title": "Psalm 25",
+          "reference": "Ps. 25",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-26",
+          "title": "Psalm 26",
+          "reference": "Ps. 26",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-27",
+          "title": "Psalm 27",
+          "reference": "Ps. 27",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-28",
+          "title": "Psalm 28",
+          "reference": "Ps. 28",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-29",
+          "title": "Psalm 29",
+          "reference": "Ps. 29",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-30",
+          "title": "Psalm 30",
+          "reference": "Ps. 30",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-31",
+          "title": "Psalm 31",
+          "reference": "Ps. 31",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-32",
+          "title": "Psalm 32",
+          "reference": "Ps. 32",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-33",
+          "title": "Psalm 33",
+          "reference": "Ps. 33",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-34",
+          "title": "Psalm 34",
+          "reference": "Ps. 34",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-35",
+          "title": "Psalm 35",
+          "reference": "Ps. 35",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-36",
+          "title": "Psalm 36",
+          "reference": "Ps. 36",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-37",
+          "title": "Psalm 37",
+          "reference": "Ps. 37",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-38",
+          "title": "Psalm 38",
+          "reference": "Ps. 38",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-39",
+          "title": "Psalm 39",
+          "reference": "Ps. 39",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-40",
+          "title": "Psalm 40",
+          "reference": "Ps. 40",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-41",
+          "title": "Psalm 41",
+          "reference": "Ps. 41",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-42",
+          "title": "Psalm 42",
+          "reference": "Ps. 42",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-43",
+          "title": "Psalm 43",
+          "reference": "Ps. 43",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-44",
+          "title": "Psalm 44",
+          "reference": "Ps. 44",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-45",
+          "title": "Psalm 45",
+          "reference": "Ps. 45",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-46",
+          "title": "Psalm 46",
+          "reference": "Ps. 46",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-47",
+          "title": "Psalm 47",
+          "reference": "Ps. 47",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-48",
+          "title": "Psalm 48",
+          "reference": "Ps. 48",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-49",
+          "title": "Psalm 49",
+          "reference": "Ps. 49",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-50",
+          "title": "Psalm 50",
+          "reference": "Ps. 50",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-51",
+          "title": "Psalm 51",
+          "reference": "Ps. 51",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-52",
+          "title": "Psalm 52",
+          "reference": "Ps. 52",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-53",
+          "title": "Psalm 53",
+          "reference": "Ps. 53",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-54",
+          "title": "Psalm 54",
+          "reference": "Ps. 54",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-55",
+          "title": "Psalm 55",
+          "reference": "Ps. 55",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-56",
+          "title": "Psalm 56",
+          "reference": "Ps. 56",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-57",
+          "title": "Psalm 57",
+          "reference": "Ps. 57",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-58",
+          "title": "Psalm 58",
+          "reference": "Ps. 58",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-59",
+          "title": "Psalm 59",
+          "reference": "Ps. 59",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-60",
+          "title": "Psalm 60",
+          "reference": "Ps. 60",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-61",
+          "title": "Psalm 61",
+          "reference": "Ps. 61",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-62",
+          "title": "Psalm 62",
+          "reference": "Ps. 62",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-63",
+          "title": "Psalm 63",
+          "reference": "Ps. 63",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-64",
+          "title": "Psalm 64",
+          "reference": "Ps. 64",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-65",
+          "title": "Psalm 65",
+          "reference": "Ps. 65",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-66",
+          "title": "Psalm 66",
+          "reference": "Ps. 66",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-67",
+          "title": "Psalm 67",
+          "reference": "Ps. 67",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-68",
+          "title": "Psalm 68",
+          "reference": "Ps. 68",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-69",
+          "title": "Psalm 69",
+          "reference": "Ps. 69",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-70",
+          "title": "Psalm 70",
+          "reference": "Ps. 70",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-71",
+          "title": "Psalm 71",
+          "reference": "Ps. 71",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-72",
+          "title": "Psalm 72",
+          "reference": "Ps. 72",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-73",
+          "title": "Psalm 73",
+          "reference": "Ps. 73",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-74",
+          "title": "Psalm 74",
+          "reference": "Ps. 74",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-75",
+          "title": "Psalm 75",
+          "reference": "Ps. 75",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-76",
+          "title": "Psalm 76",
+          "reference": "Ps. 76",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-77",
+          "title": "Psalm 77",
+          "reference": "Ps. 77",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-78",
+          "title": "Psalm 78",
+          "reference": "Ps. 78",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-79",
+          "title": "Psalm 79",
+          "reference": "Ps. 79",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-80",
+          "title": "Psalm 80",
+          "reference": "Ps. 80",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-81",
+          "title": "Psalm 81",
+          "reference": "Ps. 81",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-82",
+          "title": "Psalm 82",
+          "reference": "Ps. 82",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-83",
+          "title": "Psalm 83",
+          "reference": "Ps. 83",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-84",
+          "title": "Psalm 84",
+          "reference": "Ps. 84",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-85",
+          "title": "Psalm 85",
+          "reference": "Ps. 85",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-86",
+          "title": "Psalm 86",
+          "reference": "Ps. 86",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-87",
+          "title": "Psalm 87",
+          "reference": "Ps. 87",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-88",
+          "title": "Psalm 88",
+          "reference": "Ps. 88",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-89",
+          "title": "Psalm 89",
+          "reference": "Ps. 89",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-90",
+          "title": "Psalm 90",
+          "reference": "Ps. 90",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-91",
+          "title": "Psalm 91",
+          "reference": "Ps. 91",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-92",
+          "title": "Psalm 92",
+          "reference": "Ps. 92",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-93",
+          "title": "Psalm 93",
+          "reference": "Ps. 93",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-94",
+          "title": "Psalm 94",
+          "reference": "Ps. 94",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-95",
+          "title": "Psalm 95",
+          "reference": "Ps. 95",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-96",
+          "title": "Psalm 96",
+          "reference": "Ps. 96",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-97",
+          "title": "Psalm 97",
+          "reference": "Ps. 97",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-98",
+          "title": "Psalm 98",
+          "reference": "Ps. 98",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-99",
+          "title": "Psalm 99",
+          "reference": "Ps. 99",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-100",
+          "title": "Psalm 100",
+          "reference": "Ps. 100",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-101",
+          "title": "Psalm 101",
+          "reference": "Ps. 101",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-102",
+          "title": "Psalm 102",
+          "reference": "Ps. 102",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-103",
+          "title": "Psalm 103",
+          "reference": "Ps. 103",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-104",
+          "title": "Psalm 104",
+          "reference": "Ps. 104",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-105",
+          "title": "Psalm 105",
+          "reference": "Ps. 105",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-106",
+          "title": "Psalm 106",
+          "reference": "Ps. 106",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-107",
+          "title": "Psalm 107",
+          "reference": "Ps. 107",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-108",
+          "title": "Psalm 108",
+          "reference": "Ps. 108",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-109",
+          "title": "Psalm 109",
+          "reference": "Ps. 109",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-110",
+          "title": "Psalm 110",
+          "reference": "Ps. 110",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-111",
+          "title": "Psalm 111",
+          "reference": "Ps. 111",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-112",
+          "title": "Psalm 112",
+          "reference": "Ps. 112",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-113",
+          "title": "Psalm 113",
+          "reference": "Ps. 113",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-114",
+          "title": "Psalm 114",
+          "reference": "Ps. 114",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-115",
+          "title": "Psalm 115",
+          "reference": "Ps. 115",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-116",
+          "title": "Psalm 116",
+          "reference": "Ps. 116",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-117",
+          "title": "Psalm 117",
+          "reference": "Ps. 117",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-118",
+          "title": "Psalm 118",
+          "reference": "Ps. 118",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-119",
+          "title": "Psalm 119",
+          "reference": "Ps. 119",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-120",
+          "title": "Psalm 120",
+          "reference": "Ps. 120",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-121",
+          "title": "Psalm 121",
+          "reference": "Ps. 121",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-122",
+          "title": "Psalm 122",
+          "reference": "Ps. 122",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-123",
+          "title": "Psalm 123",
+          "reference": "Ps. 123",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-124",
+          "title": "Psalm 124",
+          "reference": "Ps. 124",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-125",
+          "title": "Psalm 125",
+          "reference": "Ps. 125",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-126",
+          "title": "Psalm 126",
+          "reference": "Ps. 126",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-127",
+          "title": "Psalm 127",
+          "reference": "Ps. 127",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-128",
+          "title": "Psalm 128",
+          "reference": "Ps. 128",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-129",
+          "title": "Psalm 129",
+          "reference": "Ps. 129",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-130",
+          "title": "Psalm 130",
+          "reference": "Ps. 130",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-131",
+          "title": "Psalm 131",
+          "reference": "Ps. 131",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-132",
+          "title": "Psalm 132",
+          "reference": "Ps. 132",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-133",
+          "title": "Psalm 133",
+          "reference": "Ps. 133",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-134",
+          "title": "Psalm 134",
+          "reference": "Ps. 134",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-135",
+          "title": "Psalm 135",
+          "reference": "Ps. 135",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-136",
+          "title": "Psalm 136",
+          "reference": "Ps. 136",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-137",
+          "title": "Psalm 137",
+          "reference": "Ps. 137",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-138",
+          "title": "Psalm 138",
+          "reference": "Ps. 138",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-139",
+          "title": "Psalm 139",
+          "reference": "Ps. 139",
+          "summary": "",
+          "themes": [],
+          "resources": [
+            {
+              "type": "Sermon",
+              "title": "LGBT: We are Imago Dei",
+              "author": "ProgressiveChristianity.org",
+              "url": "https://progressivechristianity.org/resource/sermon-starter-lgbt-we-are-imago-dei/",
+              "themes": [
+                "Queerdom",
+                "God's image"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ps-140",
+          "title": "Psalm 140",
+          "reference": "Ps. 140",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-141",
+          "title": "Psalm 141",
+          "reference": "Ps. 141",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-142",
+          "title": "Psalm 142",
+          "reference": "Ps. 142",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-143",
+          "title": "Psalm 143",
+          "reference": "Ps. 143",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-144",
+          "title": "Psalm 144",
+          "reference": "Ps. 144",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-145",
+          "title": "Psalm 145",
+          "reference": "Ps. 145",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-146",
+          "title": "Psalm 146",
+          "reference": "Ps. 146",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-147",
+          "title": "Psalm 147",
+          "reference": "Ps. 147",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-148",
+          "title": "Psalm 148",
+          "reference": "Ps. 148",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-149",
+          "title": "Psalm 149",
+          "reference": "Ps. 149",
+          "summary": "",
+          "themes": [],
+          "resources": []
+        },
+        {
+          "id": "ps-150",
+          "title": "Psalm 150",
+          "reference": "Ps. 150",
           "summary": "",
           "themes": [],
           "resources": []
@@ -8055,7 +9285,17 @@
           "reference": "Matt. 5:1–7:29",
           "summary": "",
           "themes": [],
-          "resources": []
+          "resources": [
+            {
+              "type": "Sermon",
+              "title": "Christian Nationalism: False White Gospel",
+              "author": "ProgressiveChristianity.org",
+              "url": "https://progressivechristianity.org/resource/sermon-starter-christian-nationalism-false-white-gospel/",
+              "themes": [
+                "Racism"
+              ]
+            }
+          ]
         },
         {
           "id": "matt-8-1-4",
@@ -9372,7 +10612,18 @@
           "reference": "Mark 12:18–27",
           "summary": "",
           "themes": [],
-          "resources": []
+          "resources": [
+            {
+              "type": "Sermon",
+              "title": "LGBT: The Bible is Not a Sex Manual",
+              "author": "ProgressiveChristianity.org",
+              "url": "https://progressivechristianity.org/resource/sermon-starter-lgbt-the-bible-is-not-a-sex-manual/",
+              "themes": [
+                "Queerdom",
+                "God's image"
+              ]
+            }
+          ]
         },
         {
           "id": "mark-12-28-34",
@@ -10190,7 +11441,7 @@
                 "Decolonization",
                 "Oppression",
                 "Liberation",
-                "Race"
+                "Racism"
               ]
             }
           ]
@@ -12138,7 +13389,19 @@
           "reference": "Gal. 6:1–10",
           "summary": "",
           "themes": [],
-          "resources": []
+          "resources": [
+            {
+              "type": "sermon",
+              "title": "Bearing Each Other’s Burdens",
+              "author": "Brandan Robertson",
+              "url": "https://progressivechristianity.org/resource/bearing-each-others-burdens/",
+              "themes": [
+                "Queerdom",
+                "Immigration",
+                "Oppression"
+              ]
+            }
+          ]
         },
         {
           "id": "gal-6-11-18",
@@ -12243,7 +13506,18 @@
           "reference": "Eph. 5:22–33",
           "summary": "",
           "themes": [],
-          "resources": []
+          "resources": [
+            {
+              "type": "Sermon",
+              "title": "LGBT: The Bible is Not a Sex Manual",
+              "author": "ProgressiveChristianity.org",
+              "url": "https://progressivechristianity.org/resource/sermon-starter-lgbt-the-bible-is-not-a-sex-manual/",
+              "themes": [
+                "Queerdom",
+                "God's image"
+              ]
+            }
+          ]
         },
         {
           "id": "eph-6-1-4",
@@ -13344,7 +14618,18 @@
           "reference": "1 John 4:7–21",
           "summary": "",
           "themes": [],
-          "resources": []
+          "resources": [
+            {
+              "type": "Sermon",
+              "title": "LGBT: The Bible is Not a Sex Manual",
+              "author": "ProgressiveChristianity.org",
+              "url": "https://progressivechristianity.org/resource/sermon-starter-lgbt-the-bible-is-not-a-sex-manual/",
+              "themes": [
+                "Queerdom",
+                "God's image"
+              ]
+            }
+          ]
         },
         {
           "id": "1-john-5-1-12",
