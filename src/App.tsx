@@ -128,7 +128,7 @@ const Header = () => {
           <LogoLink size="large" />
         </div>
         <h1 className="text-3xl md:text-4xl leading-tight max-w-2xl font-normal text-brand-text">
-          A free repository of inclusive, liberating, queer-affirming, anti-racist, trauma-sensitive resources on every single story in the Bible.
+          A free repository of inclusive, liberating, queer-affirming, anti-racist, trauma-sensitive resources on every single story in the Bible
         </h1>
       </motion.div>
     </header>
@@ -289,7 +289,7 @@ const SearchBar = ({
                       )}
                     >
                       <BookOpen className="w-4 h-4" fill={bookSort === 'by_book' ? "currentColor" : "none"} fillOpacity={0.15} />
-                      <span className="inline">By book</span>
+                      <span className="hidden sm:inline">By book</span>
                     </button>
                     <button
                       onClick={() => setBookSort('by_availability')}
@@ -300,7 +300,7 @@ const SearchBar = ({
                       )}
                     >
                       <Filter className="w-4 h-4" fill={bookSort === 'by_availability' ? "currentColor" : "none"} fillOpacity={0.15} />
-                      <span className="inline">By availability</span>
+                      <span className="hidden sm:inline">By availability</span>
                     </button>
                   </motion.div>
                 )}
@@ -861,7 +861,7 @@ const BookDetailPage = () => {
                       )}
                     >
                       <BookOpen className="w-4 h-4" fill={storySort === 'by_story' ? "currentColor" : "none"} fillOpacity={0.15} />
-                      <span className="inline">By story</span>
+                      <span className="hidden sm:inline">By story</span>
                     </button>
                     <button
                       onClick={() => setStorySort('by_availability')}
@@ -872,7 +872,7 @@ const BookDetailPage = () => {
                       )}
                     >
                       <Filter className="w-4 h-4" fill={storySort === 'by_availability' ? "currentColor" : "none"} fillOpacity={0.15} />
-                      <span className="inline">By availability</span>
+                      <span className="hidden sm:inline">By availability</span>
                     </button>
                     {hasBookResources && (
                       <button
@@ -884,7 +884,7 @@ const BookDetailPage = () => {
                         )}
                       >
                         <Info className="w-4 h-4" fill={storySort === 'about_book' ? "currentColor" : "none"} fillOpacity={0.15} />
-                        <span className="inline">About</span>
+                        <span className="hidden sm:inline">About</span>
                       </button>
                     )}
                   </motion.div>
