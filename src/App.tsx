@@ -99,15 +99,15 @@ const LogoLink = ({ size = 'small' }: { size?: 'small' | 'large' }) => {
           <ArrowLeft className="w-4 h-4 text-brand-muted" />
         </motion.div>
       )}
-      <div className={cn(
-        "transition-all duration-200 rounded-xl p-1 border border-transparent",
-        !isFrontPage && "group-hover:border-black/5 group-hover:bg-black/[0.02]"
-      )}>
+      <div className="relative flex items-center justify-center">
+        {!isFrontPage && (
+          <div className="absolute -inset-3 rounded-xl border border-transparent group-hover:border-black/5 group-hover:bg-black/[0.02] transition-all duration-200 pointer-events-none" />
+        )}
         <img
           src={size === 'large' ? logoMain : logoSmall}
           alt="Manifold"
           className={cn(
-            "w-auto transition-all",
+            "relative z-10 w-auto transition-all",
             size === 'large' ? "h-10 md:h-12" : "h-6 md:h-7"
           )}
         />
@@ -254,10 +254,12 @@ const SearchBar = ({
       isSticky ? "border-black/10 py-2" : "border-transparent py-4"
     )}>
       <div className="max-w-5xl mx-auto px-6 my-1">
-        <div className="flex flex-row items-center justify-between gap-2 md:gap-4">
-          {/* Left: Toggles and/or Logo */}
-          {(isSticky || (showBookSort && view === 'books' && bookSort && setBookSort)) && (
-            <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
+        <div className="flex flex-col md:flex-row items-center gap-3 md:gap-4">
+          <div className={cn(
+            "flex items-center justify-between md:justify-start gap-2 md:gap-4 w-full md:w-auto flex-shrink-0",
+            isSticky && "hidden md:flex"
+          )}>
+            <div className="flex items-center gap-2 md:gap-4">
               <AnimatePresence mode="popLayout">
                 {isSticky && (
                   <motion.div
@@ -287,7 +289,7 @@ const SearchBar = ({
                       )}
                     >
                       <BookOpen className="w-4 h-4" fill={bookSort === 'by_book' ? "currentColor" : "none"} fillOpacity={0.15} />
-                      <span className="hidden lg:inline">By book</span>
+                      <span className="inline">By book</span>
                     </button>
                     <button
                       onClick={() => setBookSort('by_availability')}
@@ -298,44 +300,66 @@ const SearchBar = ({
                       )}
                     >
                       <Filter className="w-4 h-4" fill={bookSort === 'by_availability' ? "currentColor" : "none"} fillOpacity={0.15} />
-                      <span className="hidden lg:inline">By availability</span>
+                      <span className="inline">By availability</span>
                     </button>
                   </motion.div>
                 )}
               </AnimatePresence>
             </div>
-          )}
 
-          {/* Middle: Left-aligned or Centered Search Input */}
-          <div className={cn(
-            "relative flex-1 max-w-lg w-full transition-all duration-300",
-            view === 'topics' ? "md:ml-0 md:mr-auto" : "mx-2 md:mx-auto"
-          )}>
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-muted" />
-            <input
-              type="text"
-              placeholder={view === 'books' ? "Find book" : "Find topic"}
-              className="w-full h-10 pl-10 pr-4 bg-white border border-black/5 rounded-xl focus:outline-none focus:border-black/20 focus:ring-1 focus:ring-black/10 text-sm font-medium placeholder:text-brand-muted transition-all"
-              value={value}
-              onChange={(e) => onChange(e.target.value)}
-            />
+            <div className="flex items-center text-sm font-semibold whitespace-nowrap h-10 md:hidden">
+              <div className="flex items-center gap-1 md:gap-2 px-1 md:px-3 h-full">
+                <span className={cn("cursor-default inline transition-colors", view === 'books' ? 'text-brand-text' : 'text-brand-muted')}>Books</span>
+                <button
+                  onClick={() => setView(view === 'books' ? 'topics' : 'books')}
+                  className="relative w-8 md:w-10 h-4 md:h-5 bg-[#6576F3] rounded-full p-0.5 md:p-1 transition-colors cursor-pointer"
+                >
+                  <motion.div
+                    animate={{ x: view === 'books' ? 0 : (window.innerWidth < 768 ? 16 : 20) }}
+                    className="w-3 md:w-3 h-3 md:h-3 bg-white rounded-full"
+                  />
+                </button>
+                <span className={cn("cursor-default inline transition-colors", view === 'topics' ? 'text-brand-text' : 'text-brand-muted')}>Topics</span>
+              </div>
+            </div>
           </div>
 
-          {/* Right: View Toggles */}
-          <div className="flex items-center text-sm font-semibold whitespace-nowrap h-10">
-            <div className="flex items-center gap-1 md:gap-2 px-1 md:px-3 h-full">
-              <span className={cn("cursor-default inline transition-colors", view === 'books' ? 'text-brand-text' : 'text-brand-muted')}>Books</span>
-              <button
-                onClick={() => setView(view === 'books' ? 'topics' : 'books')}
-                className="relative w-8 md:w-10 h-4 md:h-5 bg-[#6576F3] rounded-full p-0.5 md:p-1 transition-colors cursor-pointer"
-              >
-                <motion.div
-                  animate={{ x: view === 'books' ? 0 : (window.innerWidth < 768 ? 16 : 20) }}
-                  className="w-3 md:w-3 h-3 md:h-3 bg-white rounded-full"
-                />
-              </button>
-              <span className={cn("cursor-default inline transition-colors", view === 'topics' ? 'text-brand-text' : 'text-brand-muted')}>Topics</span>
+          <div className="flex items-center gap-3 w-full">
+            {isSticky && (
+              <div className="md:hidden flex-shrink-0">
+                <LogoLink size="small" />
+              </div>
+            )}
+            <div className={cn(
+              "relative flex-1 transition-all duration-300",
+              view === 'topics' ? "md:max-w-lg md:mr-auto" : "md:max-w-lg md:mx-auto"
+            )}>
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-muted" />
+              <input
+                type="text"
+                placeholder={view === 'books' ? "Find book" : "Find topic"}
+                className="w-full h-10 pl-10 pr-4 bg-white border border-black/5 rounded-xl focus:outline-none focus:border-black/20 focus:ring-1 focus:ring-black/10 text-sm font-medium placeholder:text-brand-muted transition-all"
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+              />
             </div>
+            {!isSticky && (
+              <div className="hidden md:flex items-center text-sm font-semibold whitespace-nowrap h-10">
+                <div className="flex items-center gap-1 md:gap-2 px-1 md:px-3 h-full">
+                  <span className={cn("cursor-default inline transition-colors", view === 'books' ? 'text-brand-text' : 'text-brand-muted')}>Books</span>
+                  <button
+                    onClick={() => setView(view === 'books' ? 'topics' : 'books')}
+                    className="relative w-8 md:w-10 h-4 md:h-5 bg-[#6576F3] rounded-full p-0.5 md:p-1 transition-colors cursor-pointer"
+                  >
+                    <motion.div
+                      animate={{ x: view === 'books' ? 0 : (window.innerWidth < 768 ? 16 : 20) }}
+                      className="w-3 md:w-3 h-3 md:h-3 bg-white rounded-full"
+                    />
+                  </button>
+                  <span className={cn("cursor-default inline transition-colors", view === 'topics' ? 'text-brand-text' : 'text-brand-muted')}>Topics</span>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -445,7 +469,13 @@ const HomePage = () => {
   const ntBooks = useMemo(() => filteredBooks.filter(b => b.number >= 52 && b.number <= 78), [filteredBooks]);
 
   return (
-    <div className="min-h-screen pb-20">
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.3 }}
+      className="min-h-screen pb-20"
+    >
       <Header />
       <SearchBar
         value={search}
@@ -586,7 +616,7 @@ const HomePage = () => {
           )}
         </AnimatePresence>
       </main>
-    </div>
+    </motion.div>
   );
 };
 
@@ -769,7 +799,13 @@ const BookDetailPage = () => {
   };
 
   return (
-    <div className="min-h-screen pb-20">
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.3 }}
+      className="min-h-screen pb-20"
+    >
       <div className="max-w-5xl mx-auto px-6 pt-12">
         <div className="flex items-center gap-3 mb-12">
           <LogoLink size="small" />
@@ -790,94 +826,130 @@ const BookDetailPage = () => {
         isToolbarSticky ? "border-black/10 py-2" : "border-transparent py-4"
       )}>
         <div className="max-w-5xl mx-auto px-6">
-          <div className="flex flex-row items-center justify-between gap-2 md:gap-4">
+          <div className="flex flex-col md:flex-row items-center gap-3 md:gap-4">
             {/* Left: Toggles and Logo */}
-            <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
-              <AnimatePresence mode="popLayout">
-                {isToolbarSticky && (
+            <div className={cn(
+              "flex items-center justify-between md:justify-start gap-2 md:gap-4 w-full md:w-auto flex-shrink-0",
+              isToolbarSticky && "hidden md:flex"
+            )}>
+              <div className="flex items-center gap-2 md:gap-4">
+                <AnimatePresence mode="popLayout">
+                  {isToolbarSticky && (
+                    <motion.div
+                      key="logo"
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -10 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <LogoLink size="small" />
+                    </motion.div>
+                  )}
                   <motion.div
-                    key="logo"
-                    initial={{ opacity: 0, x: -10 }}
+                    key="sort"
+                    initial={{ opacity: 0, x: 10 }}
                     animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -10 }}
-                    transition={{ duration: 0.2 }}
+                    exit={{ opacity: 0, x: 10 }}
+                    className="flex flex-wrap items-center gap-1 bg-white border border-black/5 p-1 rounded-xl h-10"
                   >
-                    <LogoLink size="small" />
-                  </motion.div>
-                )}
-                <motion.div
-                  key="sort"
-                  initial={{ opacity: 0, x: 10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 10 }}
-                  className="flex flex-wrap items-center gap-1 bg-white border border-black/5 p-1 rounded-xl h-10"
-                >
-                  <button
-                    onClick={() => setStorySort('by_story')}
-                    title="By story"
-                    className={cn(
-                      "flex items-center gap-1.5 px-3 h-full rounded-xl text-sm font-semibold transition-colors cursor-pointer",
-                      storySort === 'by_story' ? "bg-brand-bg/50 text-[#6576F3]" : "text-brand-muted hover:text-brand-text"
-                    )}
-                  >
-                    <BookOpen className="w-4 h-4" fill={storySort === 'by_story' ? "currentColor" : "none"} fillOpacity={0.15} />
-                    <span className="hidden lg:inline">By story</span>
-                  </button>
-                  <button
-                    onClick={() => setStorySort('by_availability')}
-                    title="By availability"
-                    className={cn(
-                      "flex items-center gap-1.5 px-3 h-full rounded-xl text-sm font-semibold transition-colors cursor-pointer",
-                      storySort === 'by_availability' ? "bg-brand-bg/50 text-[#6576F3]" : "text-brand-muted hover:text-brand-text"
-                    )}
-                  >
-                    <Filter className="w-4 h-4" fill={storySort === 'by_availability' ? "currentColor" : "none"} fillOpacity={0.15} />
-                    <span className="hidden lg:inline">By availability</span>
-                  </button>
-                  {hasBookResources && (
                     <button
-                      onClick={() => setStorySort('about_book')}
-                      title="About the book"
+                      onClick={() => setStorySort('by_story')}
+                      title="By story"
                       className={cn(
                         "flex items-center gap-1.5 px-3 h-full rounded-xl text-sm font-semibold transition-colors cursor-pointer",
-                        storySort === 'about_book' ? "bg-brand-bg/50 text-[#6576F3]" : "text-brand-muted hover:text-brand-text"
+                        storySort === 'by_story' ? "bg-brand-bg/50 text-[#6576F3]" : "text-brand-muted hover:text-brand-text"
                       )}
                     >
-                      <Info className="w-4 h-4" fill={storySort === 'about_book' ? "currentColor" : "none"} fillOpacity={0.15} />
-                      <span className="hidden lg:inline">About</span>
+                      <BookOpen className="w-4 h-4" fill={storySort === 'by_story' ? "currentColor" : "none"} fillOpacity={0.15} />
+                      <span className="inline">By story</span>
                     </button>
-                  )}
-                </motion.div>
-              </AnimatePresence>
+                    <button
+                      onClick={() => setStorySort('by_availability')}
+                      title="By availability"
+                      className={cn(
+                        "flex items-center gap-1.5 px-3 h-full rounded-xl text-sm font-semibold transition-colors cursor-pointer",
+                        storySort === 'by_availability' ? "bg-brand-bg/50 text-[#6576F3]" : "text-brand-muted hover:text-brand-text"
+                      )}
+                    >
+                      <Filter className="w-4 h-4" fill={storySort === 'by_availability' ? "currentColor" : "none"} fillOpacity={0.15} />
+                      <span className="inline">By availability</span>
+                    </button>
+                    {hasBookResources && (
+                      <button
+                        onClick={() => setStorySort('about_book')}
+                        title="About the book"
+                        className={cn(
+                          "flex items-center gap-1.5 px-3 h-full rounded-xl text-sm font-semibold transition-colors cursor-pointer",
+                          storySort === 'about_book' ? "bg-brand-bg/50 text-[#6576F3]" : "text-brand-muted hover:text-brand-text"
+                        )}
+                      >
+                        <Info className="w-4 h-4" fill={storySort === 'about_book' ? "currentColor" : "none"} fillOpacity={0.15} />
+                        <span className="inline">About</span>
+                      </button>
+                    )}
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+
+              {!isToolbarSticky && (
+                <div className="flex items-center gap-3 md:hidden">
+                  <span className="text-sm font-semibold text-brand-muted whitespace-nowrap">Nested resources</span>
+                  <button
+                    onClick={() => setShowNestedResources(!showNestedResources)}
+                    className={cn(
+                      "group relative inline-flex h-5 w-10 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none",
+                      showNestedResources ? "bg-[#6576F3]" : "bg-black/10"
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        "pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out",
+                        showNestedResources ? "translate-x-5" : "translate-x-0"
+                      )}
+                    />
+                  </button>
+                </div>
+              )}
             </div>
 
-            {/* Middle: Centered Search */}
-            {storySort !== 'about_book' && (
-              <div className="relative flex-1 max-w-lg mx-2 md:mx-auto w-full">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-muted" />
-                <input
-                  type="text"
-                  placeholder="Find story or Bible passage"
-                  className="w-full h-10 pl-10 pr-4 bg-white border border-black/5 rounded-xl focus:outline-none focus:border-black/20 focus:ring-1 focus:ring-black/10 text-sm font-medium placeholder:text-brand-muted transition-all"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
-            )}
-
-            {/* Right: Switch */}
-            {storySort !== 'about_book' && (
-              <div className="flex items-center h-10">
-                <label className="flex items-center gap-2 md:gap-3 cursor-pointer h-full px-1 md:px-3">
-                  <div className="relative">
-                    <input type="checkbox" className="sr-only" checked={showNestedResources} onChange={() => setShowNestedResources(!showNestedResources)} />
-                    <div className={cn("block w-8 md:w-10 h-4 md:h-6 rounded-full transition-colors", showNestedResources ? "bg-[#6576F3]" : "bg-black/20")} />
-                    <div className={cn("absolute left-1 top-0.5 md:top-1 bg-white w-3 md:w-4 h-3 md:h-4 rounded-full transition-transform", showNestedResources ? "translate-x-4" : "translate-x-0")} />
-                  </div>
-                  <span className="text-sm font-semibold text-brand-muted hidden sm:inline">Nested resources</span>
-                </label>
-              </div>
-            )}
+            <div className="flex items-center gap-3 w-full">
+              {isToolbarSticky && (
+                <div className="md:hidden flex-shrink-0">
+                  <LogoLink size="small" />
+                </div>
+              )}
+              {storySort !== 'about_book' && (
+                <div className="relative flex-1 md:max-w-lg md:mx-auto w-full">
+                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-muted" />
+                  <input
+                    type="text"
+                    placeholder="Find story or Bible passage"
+                    className="w-full h-10 pl-10 pr-4 bg-white border border-black/5 rounded-xl focus:outline-none focus:border-black/20 focus:ring-1 focus:ring-black/10 text-sm font-medium placeholder:text-brand-muted transition-all"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
+              )}
+              {!isToolbarSticky && storySort !== 'about_book' && (
+                <div className="hidden md:flex items-center gap-3">
+                  <span className="text-sm font-semibold text-brand-muted whitespace-nowrap">Nested resources</span>
+                  <button
+                    onClick={() => setShowNestedResources(!showNestedResources)}
+                    className={cn(
+                      "group relative inline-flex h-5 w-10 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none",
+                      showNestedResources ? "bg-[#6576F3]" : "bg-black/10"
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        "pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out",
+                        showNestedResources ? "translate-x-5" : "translate-x-0"
+                      )}
+                    />
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -954,7 +1026,7 @@ const BookDetailPage = () => {
           </div>
         ) : null}
       </main>
-    </div>
+    </motion.div>
   );
 };
 
@@ -967,7 +1039,13 @@ const StoryDetailPage = () => {
   if (!book || !story) return <div>Story not found</div>;
 
   return (
-    <div className="min-h-screen pb-20">
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.3 }}
+      className="min-h-screen pb-20"
+    >
       <div className="max-w-3xl mx-auto px-6 pt-12">
         <div className="flex items-center gap-3 mb-12">
           <LogoLink size="small" />
@@ -1050,7 +1128,7 @@ const StoryDetailPage = () => {
           </section>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
@@ -1072,12 +1150,22 @@ export default function App() {
   return (
     <Router>
       <ScrollToTop />
-      <Routes>
+      <AppContent />
+      <Footer />
+    </Router>
+  );
+}
+
+function AppContent() {
+  const location = useLocation();
+
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
         <Route path="/" element={<HomePage />} />
         <Route path="/book/:bookId" element={<BookDetailPage />} />
         <Route path="/book/:bookId/story/:storyId" element={<StoryDetailPage />} />
       </Routes>
-      <Footer />
-    </Router>
+    </AnimatePresence>
   );
 }
