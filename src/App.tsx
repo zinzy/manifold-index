@@ -91,7 +91,7 @@ const Header = () => (
         <img src={logo} alt="Manifold Logo" className="h-10 w-auto" />
       </Link>
       <h1 className="text-3xl md:text-4xl leading-tight max-w-2xl">
-        A free repository of inclusive, liberating, queer-affirming, anti-racist, traumaresources on every single story in the Christian Bible.
+        A free repository of inclusive, liberating, queer-affirming, anti-racist, trauma-sensitive resources on every single story in the Bible.
       </h1>
     </motion.div>
   </header>
@@ -457,16 +457,82 @@ const BookDetailPage = () => {
 
   if (!book) return <div>Book not found</div>;
 
-  const availableStories = useMemo(() => book.stories.filter(s => s.resources.length > 0), [book.stories]);
-  const unavailableStories = useMemo(() => book.stories.filter(s => s.resources.length === 0), [book.stories]);
-
   const hasBookResources = book.resources && book.resources.length > 0;
-  const initialSort = hasBookResources && availableStories.length === 0 ? 'about_book' : 'by_story';
+  const initialSort = hasBookResources && book.stories.filter(s => s.resources.length > 0).length === 0 ? 'about_book' : 'by_story';
 
   const [storySort, setStorySort] = useState<'by_story' | 'by_availability' | 'about_book'>(
     initialSort
   );
   const [showNestedResources, setShowNestedResources] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredStories = useMemo(() => {
+    if (!searchQuery.trim()) return book.stories;
+    const queryStr = searchQuery.toLowerCase().trim();
+
+    // Check if query is like "Gen 2:6"
+    const verseQueryMatch = queryStr.match(/^([a-z\s\.]+?)\s+(\d+):(\d+)$/);
+    if (verseQueryMatch) {
+      const [, bookPart, searchChapStr, searchVerseStr] = verseQueryMatch;
+      const searchChap = parseInt(searchChapStr, 10);
+      const searchVerse = parseInt(searchVerseStr, 10);
+      const queryValue = searchChap * 1000 + searchVerse;
+      const cleanBookPart = bookPart.replace(/\./g, '').trim();
+
+      return book.stories.filter(s => {
+        const refLower = s.reference.toLowerCase();
+        if (!refLower.includes(cleanBookPart)) return false;
+
+        // Parse story reference: "2:4-25" or "1:1-2:3"
+        const refPattern = /(\d+):(\d+)(?:[a-z])?(?:[-–]\s*(?:(\d+):)?(\d+)(?:[a-z])?)?/;
+        const refMatch = refLower.match(refPattern);
+        if (refMatch) {
+          const startChap = parseInt(refMatch[1], 10);
+          const startVerse = parseInt(refMatch[2], 10);
+          const endChap = refMatch[3] ? parseInt(refMatch[3], 10) : startChap;
+          const endVerse = refMatch[4] ? parseInt(refMatch[4], 10) : startVerse;
+
+          const startValue = startChap * 1000 + startVerse;
+          const endValue = endChap * 1000 + endVerse;
+
+          return queryValue >= startValue && queryValue <= endValue;
+        }
+        return false;
+      });
+    }
+
+    // Check if the query looks like "Book Chapter" (e.g. "Gen 2" or "Genesis 2")
+    const chapterMatch = queryStr.match(/^([a-z\s]+?)\s+(\d+)$/);
+
+    if (chapterMatch) {
+      // If it's a chapter search, we want to match references like "Gen. 2:" or "Genesis 2:"
+      // We don't want to match "Gen. 1:2"
+      const [, bookPart, chapter] = chapterMatch;
+
+      return book.stories.filter(s => {
+        const refLower = s.reference.toLowerCase();
+        // Match the exact chapter start: e.g. " 2:" or ". 2:" or just "2:" 
+        // to ensure we're matching the chapter number, not a verse number.
+        const chapterPattern = new RegExp(`\\b${chapter}:`);
+
+        return refLower.includes(bookPart) && chapterPattern.test(refLower);
+      });
+    }
+
+    // Fallback to the standard boolean AND search across terms
+    const queryTerms = queryStr.split(/\s+/).filter(Boolean);
+    return book.stories.filter(s => {
+      const titleLower = s.title.toLowerCase();
+      const refLower = s.reference.toLowerCase();
+
+      return queryTerms.every(term =>
+        titleLower.includes(term) || refLower.includes(term)
+      );
+    });
+  }, [book.stories, searchQuery]);
+
+  const availableStories = useMemo(() => filteredStories.filter(s => s.resources.length > 0), [filteredStories]);
+  const unavailableStories = useMemo(() => filteredStories.filter(s => s.resources.length === 0), [filteredStories]);
 
   const renderStory = (story: Story) => {
     const hasResources = story.resources.length > 0;
@@ -499,9 +565,9 @@ const BookDetailPage = () => {
       </div>
     );
 
-    if (!hasResources) return <div key={story.id}>{storyContent}</div>;
+    if (!hasResources) return <div key={story.id + story.reference}>{storyContent}</div>;
 
-    if (showNestedResources) {
+    if (showNestedResources && hasResources) {
       return (
         <div key={story.id} className="mb-8">
           {storyContent}
@@ -557,9 +623,22 @@ const BookDetailPage = () => {
           <CategoryBadge category={book.category} />
         </div>
 
-        <p className="text-2xl text-brand-text/80 max-w-2xl mb-12 leading-relaxed">
+        <p className="text-2xl text-brand-text/80 max-w-2xl mb-8 leading-relaxed">
           {book.description}
         </p>
+
+        {storySort !== 'about_book' && (
+          <div className="sm:hidden relative w-full mb-8">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-muted" />
+            <input
+              type="text"
+              placeholder="Search by story title or reference"
+              className="w-full pl-10 pr-4 py-2.5 bg-brand-card border border-black/5 rounded-xl focus:outline-none focus:border-black/20 focus:ring-1 focus:ring-black/10 text-sm placeholder:text-brand-muted card-shadow transition-all"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+        )}
 
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div className="flex flex-wrap items-center gap-1 sm:gap-2 bg-brand-card p-1 rounded-lg w-full sm:w-fit border border-black/5 card-shadow">
@@ -589,6 +668,19 @@ const BookDetailPage = () => {
           </div>
 
           {storySort !== 'about_book' && (
+            <div className="hidden sm:flex flex-1 mx-4 relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-muted" />
+              <input
+                type="text"
+                placeholder="Search by title or reference (e.g. Gen 1:2)"
+                className="w-full pl-10 pr-4 py-2 bg-brand-card border border-black/5 rounded-xl focus:outline-none focus:border-black/20 focus:ring-1 focus:ring-black/10 text-sm placeholder:text-brand-muted card-shadow transition-all"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+          )}
+
+          {storySort !== 'about_book' && (
             <label className="flex items-center gap-3 cursor-pointer">
               <span className="text-sm font-medium text-brand-muted">Show nested resources</span>
               <div className="relative">
@@ -600,63 +692,76 @@ const BookDetailPage = () => {
           )}
         </div>
 
-        {storySort === 'about_book' && book.resources && book.resources.length > 0 ? (
-          <div className="space-y-8">
-            <section>
-              <h2 className="text-xs font-semibold uppercase tracking-widest text-brand-muted mb-6 border-b border-black/5 pb-2">
-                Resources ({book.resources.length})
-              </h2>
-              <div className="grid gap-4">
-                {book.resources.map((res, i) => (
-                  <a
-                    key={i}
-                    href={res.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group bg-brand-card p-6 rounded-2xl border border-black/5 card-shadow flex items-start justify-between hover:border-black/20 transition-all"
-                  >
-                    <div>
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 bg-gray-100 text-gray-500 rounded">
-                          {res.type}
-                        </span>
+        {storySort === 'about_book' ? (
+          book.resources && book.resources.length > 0 ? (
+            <div className="space-y-8">
+              <section>
+                <h2 className="text-xs font-semibold uppercase tracking-widest text-brand-muted mb-6 border-b border-black/5 pb-2">
+                  Resources ({book.resources.length})
+                </h2>
+                <div className="grid gap-4">
+                  {book.resources.map((res, i) => (
+                    <a
+                      key={i}
+                      href={res.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group bg-brand-card p-6 rounded-2xl border border-black/5 card-shadow flex items-start justify-between hover:border-black/20 transition-all"
+                    >
+                      <div>
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 bg-gray-100 text-gray-500 rounded">
+                            {res.type}
+                          </span>
+                        </div>
+                        <h3 className="text-lg font-semibold group-hover:text-[#6576F3] transition-colors">{res.title}</h3>
+                        {res.author && (
+                          <p className="text-sm text-brand-muted mt-1">
+                            by {res.author}
+                            {res.collection && <span> in <span className="italic">{res.collection}</span></span>}
+                          </p>
+                        )}
                       </div>
-                      <h3 className="text-lg font-semibold group-hover:text-[#6576F3] transition-colors">{res.title}</h3>
-                      {res.author && (
-                        <p className="text-sm text-brand-muted mt-1">
-                          by {res.author}
-                          {res.collection && <span> in <span className="italic">{res.collection}</span></span>}
-                        </p>
-                      )}
-                    </div>
-                    <ExternalLink className="w-4 h-4 text-brand-muted group-hover:text-[#6576F3] transition-colors mt-1" />
-                  </a>
-                ))}
-              </div>
-            </section>
-          </div>
+                      <ExternalLink className="w-4 h-4 text-brand-muted group-hover:text-[#6576F3] transition-colors mt-1" />
+                    </a>
+                  ))}
+                </div>
+              </section>
+            </div>
+          ) : null
         ) : storySort === 'by_story' ? (
           <div className="space-y-3">
-            {book.stories.map(renderStory)}
+            {filteredStories.length > 0 ? (
+              filteredStories.map(renderStory)
+            ) : searchQuery ? (
+              <p className="text-brand-muted py-8 text-center bg-brand-card/50 border border-dashed border-black/10 rounded-2xl">No stories match your search.</p>
+            ) : (
+              <p className="text-brand-muted py-8 text-center bg-brand-card/50 border border-dashed border-black/10 rounded-2xl">No stories yet.</p>
+            )}
           </div>
-        ) : (
+        ) : storySort === 'by_availability' ? (
           <div className="space-y-12">
-            {availableStories.length > 0 && (
-              <div className="space-y-3">
-                {availableStories.map(renderStory)}
+            {availableStories.length > 0 ? (
+              <div>
+                <h2 className="text-xs font-semibold uppercase tracking-widest text-brand-muted mb-6 border-b border-black/5 pb-2">With resources ({availableStories.length})</h2>
+                <div className="space-y-3">
+                  {availableStories.map(renderStory)}
+                </div>
               </div>
+            ) : (
+              <p className="text-brand-muted py-8 text-center bg-brand-card/50 border border-dashed border-black/10 rounded-2xl">No stories with resources yet.</p>
             )}
 
             {unavailableStories.length > 0 && (
               <div>
-                <h2 className="text-xl font-semibold mb-6">No resources yet</h2>
+                <h2 className="text-xs font-semibold uppercase tracking-widest text-brand-muted mb-6 border-b border-black/5 pb-2">No resources yet ({unavailableStories.length})</h2>
                 <div className="space-y-3">
                   {unavailableStories.map(renderStory)}
                 </div>
               </div>
             )}
           </div>
-        )}
+        ) : null}
       </div>
     </div>
   );
@@ -692,7 +797,7 @@ const StoryDetailPage = () => {
             <span className="w-1 h-1 bg-brand-muted/30 rounded-full" />
             <CategoryBadge category={book.category} />
           </div>
-          <h1 className="text-5xl font-semibold mb-6">{story.title}</h1>
+          <h1 className="text-2xl font-semibold mb-6">{story.title}</h1>
           <p className="text-xl text-brand-muted italic leading-relaxed mb-8">
             {story.summary}
           </p>
