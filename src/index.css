@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap');
 @import "tailwindcss";
 
-@theme {
+:root {
   --color-brand-bg: #FDFCFB;
   --color-brand-card: #FFFFFF;
   --color-brand-text: #3D3847;
@@ -39,6 +39,86 @@
 
   --color-category-apocalypse: #ECFEFF;
   --color-category-apocalypse-dot: #56DBED;
+}
+
+:root[class~="dark"] {
+  --color-brand-bg: #18181B;
+  --color-brand-card: #27272A;
+  --color-brand-text: #F3F4F6;
+  --color-brand-muted: #9CA3AF;
+
+  --color-category-pentateuch: rgba(250, 80, 69, 0.15);
+  --color-category-pentateuch-dot: #FA5045;
+
+  --color-category-historical: rgba(255, 118, 74, 0.15);
+  --color-category-historical-dot: #FF764A;
+
+  --color-category-writings: rgba(255, 207, 63, 0.15);
+  --color-category-writings-dot: #FFCF3F;
+
+  --color-category-wisdom: rgba(255, 195, 148, 0.15);
+  --color-category-wisdom-dot: #FFC394;
+
+  --color-category-prophets: rgba(94, 220, 86, 0.15);
+  --color-category-prophets-dot: #5EDC56;
+
+  --color-category-deuterocanonical: rgba(173, 109, 223, 0.15);
+  --color-category-deuterocanonical-dot: #AD6DDF;
+
+  --color-category-gospels: rgba(255, 169, 169, 0.15);
+  --color-category-gospels-dot: #FFA9A9;
+
+  --color-category-acts: rgba(30, 184, 252, 0.15);
+  --color-category-acts-dot: #1EB8FC;
+
+  --color-category-pauline: rgba(101, 118, 243, 0.15);
+  --color-category-pauline-dot: #6576F3;
+
+  --color-category-catholic: rgba(242, 124, 219, 0.15);
+  --color-category-catholic-dot: #F27CDB;
+
+  --color-category-apocalypse: rgba(86, 219, 237, 0.15);
+  --color-category-apocalypse-dot: #56DBED;
+}
+
+@theme {
+  --color-brand-bg: var(--color-brand-bg);
+  --color-brand-card: var(--color-brand-card);
+  --color-brand-text: var(--color-brand-text);
+  --color-brand-muted: var(--color-brand-muted);
+
+  --color-category-pentateuch: var(--color-category-pentateuch);
+  --color-category-pentateuch-dot: var(--color-category-pentateuch-dot);
+
+  --color-category-historical: var(--color-category-historical);
+  --color-category-historical-dot: var(--color-category-historical-dot);
+
+  --color-category-writings: var(--color-category-writings);
+  --color-category-writings-dot: var(--color-category-writings-dot);
+
+  --color-category-wisdom: var(--color-category-wisdom);
+  --color-category-wisdom-dot: var(--color-category-wisdom-dot);
+
+  --color-category-prophets: var(--color-category-prophets);
+  --color-category-prophets-dot: var(--color-category-prophets-dot);
+
+  --color-category-deuterocanonical: var(--color-category-deuterocanonical);
+  --color-category-deuterocanonical-dot: var(--color-category-deuterocanonical-dot);
+
+  --color-category-gospels: var(--color-category-gospels);
+  --color-category-gospels-dot: var(--color-category-gospels-dot);
+
+  --color-category-acts: var(--color-category-acts);
+  --color-category-acts-dot: var(--color-category-acts-dot);
+
+  --color-category-pauline: var(--color-category-pauline);
+  --color-category-pauline-dot: var(--color-category-pauline-dot);
+
+  --color-category-catholic: var(--color-category-catholic);
+  --color-category-catholic-dot: var(--color-category-catholic-dot);
+
+  --color-category-apocalypse: var(--color-category-apocalypse);
+  --color-category-apocalypse-dot: var(--color-category-apocalypse-dot);
 
   --font-sans: "Instrument Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
 }
@@ -47,6 +127,7 @@
   body {
     @apply bg-brand-bg text-brand-text font-sans antialiased;
   }
+
 }
 
 .card-shadow {

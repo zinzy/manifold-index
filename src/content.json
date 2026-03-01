@@ -33,6 +33,17 @@
               "collection": "Take Back the Word: A Queer Reading of the Bible",
               "author": "Ken Stone",
               "url": "https://archive.org/details/takebackwordquee0000unse/page/n5/mode/2up"
+            },
+            {
+              "type": "Devotional",
+              "title": "Beyond Genesis",
+              "author": "Stephen Eugene Pollmann",
+              "url": "https://vineandfig.co/blog/the-sunday-project/2021/beyond-genesis.html",
+              "themes": [
+                "Queerdom",
+                "Trauma",
+                "Gender"
+              ]
             }
           ]
         },
@@ -1700,7 +1711,14 @@
           "reference": "Num. 5:11–31",
           "summary": "",
           "themes": [],
-          "resources": []
+          "resources": [
+            {
+              "type": "Devotional",
+              "title": "From Out-Catholicing to embracing my sacred hot-messiness",
+              "author": "Delfin",
+              "url": "https://vineandfig.co/blog/the-sunday-project/2021/out-catholicing-embracing-my-sacred-hot-messiness.html"
+            }
+          ]
         },
         {
           "id": "num-6-1-21",
@@ -7950,7 +7968,14 @@
           "reference": "Matt. 2:1–12",
           "summary": "",
           "themes": [],
-          "resources": []
+          "resources": [
+            {
+              "type": "Devotional",
+              "title": "Venite Adoremus",
+              "author": "Stephen Eugene Pollmann",
+              "url": "https://vineandfig.co/blog/the-sunday-project/2022/venite-adoremus.html"
+            }
+          ]
         },
         {
           "id": "matt-2-13-15",
@@ -9209,7 +9234,14 @@
           "reference": "Mark 9:42–50",
           "summary": "",
           "themes": [],
-          "resources": []
+          "resources": [
+            {
+              "type": "Devotional",
+              "title": "From Out-Catholicing to embracing my sacred hot-messiness",
+              "author": "Delfin",
+              "url": "https://vineandfig.co/blog/the-sunday-project/2021/out-catholicing-embracing-my-sacred-hot-messiness.html"
+            }
+          ]
         },
         {
           "id": "mark-10-1-12",
@@ -9229,11 +9261,19 @@
         },
         {
           "id": "mark-10-17-31",
-          "title": "The Rich Young Man",
+          "title": "The Rich and the Kingdom of God",
           "reference": "Mark 10:17–31",
           "summary": "",
           "themes": [],
-          "resources": []
+          "resources": [
+            {
+              "type": "Devotional",
+              "title": "Give From Our Abundance and Our Poverty",
+              "author": "Jordan Kennedy",
+              "url": "https://vineandfig.co/blog/the-sunday-project/2021/give-our-abundance-and-our-poverty.html",
+              "themes": []
+            }
+          ]
         },
         {
           "id": "mark-10-32-34",
@@ -9249,7 +9289,18 @@
           "reference": "Mark 10:35–45",
           "summary": "",
           "themes": [],
-          "resources": []
+          "resources": [
+            {
+              "type": "Devotional",
+              "title": "The most depressing sin",
+              "author": "Zinzy Waleson Geene",
+              "url": "https://vineandfig.co/blog/the-sunday-project/2021/most-depressing-sin.html",
+              "themes": [
+                "Queerdom",
+                "Trauma"
+              ]
+            }
+          ]
         },
         {
           "id": "mark-10-46-52",
@@ -9546,7 +9597,17 @@
           "reference": "Luke 1:39–56",
           "summary": "",
           "themes": [],
-          "resources": []
+          "resources": [
+            {
+              "type": "Devotional",
+              "title": "Variegated Faith",
+              "author": "Luke Morris",
+              "url": "https://vineandfig.co/blog/the-sunday-project/2021/variegated-faith.html",
+              "themes": [
+                "Queerdom"
+              ]
+            }
+          ]
         },
         {
           "id": "luke-1-57-66",
@@ -9586,7 +9647,14 @@
           "reference": "Luke 2:41–52",
           "summary": "",
           "themes": [],
-          "resources": []
+          "resources": [
+            {
+              "type": "Devotional",
+              "title": "Why Were You Looking For Me?",
+              "author": "Theo",
+              "url": "https://vineandfig.co/blog/the-sunday-project/2021/why-were-you-looking-me.html"
+            }
+          ]
         },
         {
           "id": "luke-3-1-22",
@@ -9596,10 +9664,16 @@
           "themes": [],
           "resources": [
             {
-              "type": "Devotion",
+              "type": "Devotional",
               "title": "Like the seasons",
               "author": "Zinzy Waleson Geene",
               "url": "https://vineandfig.co/blog/the-sunday-project/2021/like-the-seasons.html"
+            },
+            {
+              "type": "Devotional",
+              "title": "The Long Game",
+              "author": "Father Peter MacNaughton",
+              "url": "https://vineandfig.co/blog/the-sunday-project/2022/long-game.html"
             }
           ]
         },
@@ -9849,7 +9923,17 @@
           "reference": "Luke 9:28–36",
           "summary": "",
           "themes": [],
-          "resources": []
+          "resources": [
+            {
+              "type": "Devotional",
+              "title": "Listen to Jesus…",
+              "author": "Eilis",
+              "url": "https://vineandfig.co/blog/the-sunday-project/2022/listen-jesus.html",
+              "themes": [
+                "Queerdom"
+              ]
+            }
+          ]
         },
         {
           "id": "luke-9-37-45",
@@ -10085,11 +10169,31 @@
         },
         {
           "id": "luke-15-11-32",
-          "title": "The Parable of the Prodigal Son",
+          "title": "The Parable of the Lost Son",
           "reference": "Luke 15:11–32",
           "summary": "",
           "themes": [],
-          "resources": []
+          "resources": [
+            {
+              "type": "Article",
+              "title": "Frazzling God's Goodness",
+              "author": "Delfin W. Bautista",
+              "url": "https://vineandfig.co/blog/the-sunday-project/2022/frazzling-gods-goodness.html",
+              "themes": []
+            },
+            {
+              "type": "Article",
+              "title": "The Prodigal Son and the Son Who Stayed: A Decolonized Perspective on Obedience, Worth, and Liberation",
+              "author": "Octavia Brown",
+              "url": "https://www.urbanmh.com/uimhblog/the-prodigal-son-and-the-son-who-stayed-a-decolonized-perspective-on-obedience-worth-and-liberation",
+              "themes": [
+                "Decolonization",
+                "Oppression",
+                "Liberation",
+                "Race"
+              ]
+            }
+          ]
         },
         {
           "id": "luke-16-1-13",
@@ -10776,11 +10880,21 @@
         },
         {
           "id": "john-20-1-10",
-          "title": "The Resurrection",
+          "title": "The Empty Tomb",
           "reference": "John 20:1–10",
           "summary": "",
           "themes": [],
-          "resources": []
+          "resources": [
+            {
+              "type": "Devotional",
+              "title": "Jesus Was There",
+              "author": "Father Peter MacNaughton",
+              "url": "https://vineandfig.co/blog/the-sunday-project/2022/jesus-was-there.html",
+              "themes": [
+                "Queerdom"
+              ]
+            }
+          ]
         },
         {
           "id": "john-20-11-18",
@@ -11015,7 +11129,7 @@
           "themes": [],
           "resources": [
             {
-              "type": "Devotion",
+              "type": "Devotional",
               "title": "Doubting Thomas",
               "author": "Ryan McQuade",
               "url": "https://vineandfig.co/blog/the-sunday-project/2022/doubting-thomas.html"

@@ -1,12 +1,14 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useParams, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
-import { Search, ChevronRight, ArrowLeft, BookOpen, ExternalLink, Filter, Menu, X, Info, LogOut, MousePointerClick } from 'lucide-react';
+import { Search, ChevronRight, ArrowLeft, BookOpen, ExternalLink, Filter, Menu, X, Info, LogOut, MousePointerClick, Sun, Moon, Monitor } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import contentData from './content.json';
-import logoMain from './logo.svg';
-import logoSmall from './logo_small.svg';
+import logoMainLight from './logo.svg';
+import logoMainDark from './logo_dark.svg';
+import logoSmallLight from './logo_small.svg';
+import logoSmallDark from './logo_small_dark.svg';
 
 // --- Utils ---
 function cn(...inputs: ClassValue[]) {
@@ -43,6 +45,95 @@ interface BibleBook {
 }
 
 // --- Components ---
+
+export type Theme = 'light' | 'dark' | 'system';
+
+interface ThemeContextType {
+  theme: Theme;
+  resolvedTheme: 'light' | 'dark';
+  setTheme: (theme: Theme) => void;
+}
+
+const ThemeContext = React.createContext<ThemeContextType | undefined>(undefined);
+
+export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
+  const [theme, setTheme] = useState<Theme>(() => {
+    return (localStorage.getItem('theme') as Theme) || 'system';
+  });
+
+  const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light');
+
+  useEffect(() => {
+    localStorage.setItem('theme', theme);
+    const root = window.document.documentElement;
+    root.classList.remove('light', 'dark');
+
+    if (theme === 'system') {
+      const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setResolvedTheme(isDark ? 'dark' : 'light');
+      root.classList.add(isDark ? 'dark' : 'light');
+
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      const handleChange = (e: MediaQueryListEvent) => {
+        const newIsDark = e.matches;
+        root.classList.remove('light', 'dark');
+        root.classList.add(newIsDark ? 'dark' : 'light');
+        setResolvedTheme(newIsDark ? 'dark' : 'light');
+      };
+      mediaQuery.addEventListener('change', handleChange);
+      return () => mediaQuery.removeEventListener('change', handleChange);
+    } else {
+      setResolvedTheme(theme);
+      root.classList.add(theme);
+    }
+  }, [theme]);
+
+  return (
+    <ThemeContext.Provider value={{ theme, resolvedTheme, setTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+};
+
+export const useTheme = () => {
+  const context = React.useContext(ThemeContext);
+  if (context === undefined) throw new Error("useTheme must be used within a ThemeProvider");
+  return context;
+};
+
+const ThemeToggle = () => {
+  const { theme, setTheme } = useTheme();
+
+  const pos = theme === 'light' ? 0 : theme === 'system' ? 1 : 2;
+
+  return (
+    <div className="flex items-center gap-3">
+      <span className={cn("text-[10px] font-bold uppercase tracking-widest transition-colors", theme === 'light' ? 'text-brand-text' : 'text-brand-muted')}>Light</span>
+
+      <div
+        className="relative inline-flex h-7 w-16 rounded-full bg-black/5 dark:bg-white/10 p-1 cursor-pointer card-shadow"
+        onClick={() => {
+          if (theme === 'light') setTheme('system');
+          else if (theme === 'system') setTheme('dark');
+          else setTheme('light');
+        }}
+        title="Toggle dark mode"
+      >
+        <motion.div
+          animate={{ x: pos * 18 }}
+          className="absolute h-5 w-5 rounded-full bg-white dark:bg-brand-bg shadow flex items-center justify-center top-1"
+          transition={{ type: "spring", stiffness: 500, damping: 30 }}
+        >
+          {theme === 'light' ? <Sun className="w-3 h-3 text-amber-500" /> :
+            theme === 'dark' ? <Moon className="w-3 h-3 text-indigo-400" /> :
+              <Monitor className="w-3 h-3 text-brand-muted" />}
+        </motion.div>
+      </div>
+
+      <span className={cn("text-[10px] font-bold uppercase tracking-widest transition-colors", theme === 'dark' ? 'text-brand-text' : 'text-brand-muted')}>Dark</span>
+    </div>
+  );
+};
 
 const CategoryBadge = ({ category }: { category: string }) => {
   const styles: Record<string, string> = {
@@ -84,6 +175,10 @@ const CategoryBadge = ({ category }: { category: string }) => {
 const LogoLink = ({ size = 'small' }: { size?: 'small' | 'large' }) => {
   const location = useLocation();
   const isFrontPage = location.pathname === '/';
+  const { resolvedTheme } = useTheme();
+
+  const logoMainImg = resolvedTheme === 'dark' ? logoMainDark : logoMainLight;
+  const logoSmallImg = resolvedTheme === 'dark' ? logoSmallDark : logoSmallLight;
 
   return (
     <Link
@@ -104,7 +199,7 @@ const LogoLink = ({ size = 'small' }: { size?: 'small' | 'large' }) => {
           <div className="absolute -inset-3 rounded-xl border border-transparent group-hover:border-black/5 group-hover:bg-black/[0.02] transition-all duration-200 pointer-events-none" />
         )}
         <img
-          src={size === 'large' ? logoMain : logoSmall}
+          src={size === 'large' ? logoMainImg : logoSmallImg}
           alt="Manifold"
           className={cn(
             "relative z-10 w-auto transition-all",
@@ -121,7 +216,10 @@ const Header = () => {
 
   return (
     <>
-      <header className="pt-16 pb-12 px-6 max-w-5xl mx-auto">
+      <header className="pt-14 md:pt-16 pb-12 px-6 max-w-5xl mx-auto relative">
+        <div className="absolute top-4 right-6 md:top-6">
+          <ThemeToggle />
+        </div>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -147,7 +245,7 @@ const Header = () => {
             </motion.div>
           </div>
           <h1 className="text-3xl md:text-4xl leading-tight max-w-2xl font-normal text-brand-text">
-            A free repository of inclusive, liberating, queer-affirming, anti-racist, trauma-sensitive resources on every single story in the Bible
+            A free repository of inclusive, liberating, deconstructing, queer-affirming, anti-racist, trauma-sensitive resources on every single story in the Bible
           </h1>
         </motion.div>
       </header>
@@ -334,7 +432,7 @@ const SearchBar = ({
                     initial={{ opacity: 0, x: 10 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: 10 }}
-                    className="flex items-center gap-1 bg-white border border-black/5 p-1 rounded-xl h-10"
+                    className="flex items-center gap-1 bg-brand-card border border-black/5 p-1 rounded-xl h-10"
                   >
                     <button
                       onClick={() => setBookSort('by_book')}
@@ -368,11 +466,16 @@ const SearchBar = ({
                 <span className={cn("cursor-default inline transition-colors", view === 'books' ? 'text-brand-text' : 'text-brand-muted')}>Books</span>
                 <button
                   onClick={() => setView(view === 'books' ? 'topics' : 'books')}
-                  className="relative w-8 md:w-10 h-4 md:h-5 bg-[#6576F3] rounded-full p-0.5 md:p-1 transition-colors cursor-pointer"
+                  className={cn(
+                    "group relative inline-flex h-5 w-10 flex-shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none cursor-pointer",
+                    view === 'topics' ? "bg-[#6576F3]" : "bg-[#6576F3]/50"
+                  )}
                 >
-                  <motion.div
-                    animate={{ x: view === 'books' ? 0 : (window.innerWidth < 768 ? 16 : 20) }}
-                    className="w-3 md:w-3 h-3 md:h-3 bg-white rounded-full"
+                  <span
+                    className={cn(
+                      "pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out",
+                      view === 'topics' ? "translate-x-5" : "translate-x-0"
+                    )}
                   />
                 </button>
                 <span className={cn("cursor-default inline transition-colors", view === 'topics' ? 'text-brand-text' : 'text-brand-muted')}>Topics</span>
@@ -394,7 +497,7 @@ const SearchBar = ({
               <input
                 type="text"
                 placeholder={view === 'books' ? "Find book" : "Find topic"}
-                className="w-full h-10 pl-10 pr-4 bg-white border border-black/5 rounded-xl focus:outline-none focus:border-black/20 focus:ring-1 focus:ring-black/10 text-sm font-medium placeholder:text-brand-muted transition-all"
+                className="w-full h-10 pl-10 pr-4 bg-brand-card border border-black/5 rounded-xl focus:outline-none focus:border-black/20 focus:ring-1 focus:ring-black/10 text-sm font-medium placeholder:text-brand-muted transition-all"
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
               />
@@ -405,11 +508,16 @@ const SearchBar = ({
                   <span className={cn("cursor-default inline transition-colors", view === 'books' ? 'text-brand-text' : 'text-brand-muted')}>Books</span>
                   <button
                     onClick={() => setView(view === 'books' ? 'topics' : 'books')}
-                    className="relative w-8 md:w-10 h-4 md:h-5 bg-[#6576F3] rounded-full p-0.5 md:p-1 transition-colors cursor-pointer"
+                    className={cn(
+                      "group relative inline-flex h-5 w-10 flex-shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none cursor-pointer",
+                      view === 'topics' ? "bg-[#6576F3]" : "bg-[#6576F3]/50"
+                    )}
                   >
-                    <motion.div
-                      animate={{ x: view === 'books' ? 0 : (window.innerWidth < 768 ? 16 : 20) }}
-                      className="w-3 md:w-3 h-3 md:h-3 bg-white rounded-full"
+                    <span
+                      className={cn(
+                        "pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out",
+                        view === 'topics' ? "translate-x-5" : "translate-x-0"
+                      )}
                     />
                   </button>
                   <span className={cn("cursor-default inline transition-colors", view === 'topics' ? 'text-brand-text' : 'text-brand-muted')}>Topics</span>
@@ -565,14 +673,17 @@ const HomePage = () => {
                   return (b.resources && b.resources.length > 0) || (b.stories.length > 0 && totalStoryResources > 0);
                 });
 
-                const unavailableInSection = sectionBooks.filter(b => {
-                  const totalStoryResources = b.stories.reduce((acc, s) => acc + s.resources.length, 0);
-                  return !((b.resources && b.resources.length > 0) || (b.stories.length > 0 && totalStoryResources > 0));
-                });
+                if (bookSort === 'by_availability' && availableInSection.length === 0) {
+                  return null;
+                }
+
+                const displayedCount = bookSort === 'by_book' ? sectionBooks.length : availableInSection.length;
 
                 return (
-                  <section key={title} className="space-y-8">
-                    <h2 className="text-xs font-semibold uppercase tracking-widest text-brand-muted mb-6 border-b border-black/5 pb-2">{title}</h2>
+                  <section key={title} className="space-y-6">
+                    <h2 className="text-xs font-semibold uppercase tracking-widest text-brand-muted mb-6 border-b border-black/5 pb-2">
+                      {title} ({displayedCount})
+                    </h2>
 
                     {bookSort === 'by_book' ? (
                       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
@@ -581,34 +692,28 @@ const HomePage = () => {
                         ))}
                       </div>
                     ) : (
-                      <div className="space-y-12">
-                        {availableInSection.length > 0 && (
-                          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
-                            {availableInSection.map((book) => (
-                              <BookCard key={book.id} book={book} />
-                            ))}
-                          </div>
-                        )}
-
-                        {unavailableInSection.length > 0 && (
-                          <div>
-                            <h3 className="text-[10px] font-bold uppercase tracking-widest text-brand-muted/40 mb-4 flex items-center gap-2">
-                              <span className="h-px bg-black/5 flex-1" />
-                              No resources yet
-                              <span className="h-px bg-black/5 flex-1" />
-                            </h3>
-                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
-                              {unavailableInSection.map((book) => (
-                                <BookCard key={book.id} book={book} />
-                              ))}
-                            </div>
-                          </div>
-                        )}
+                      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+                        {availableInSection.map((book) => (
+                          <BookCard key={book.id} book={book} />
+                        ))}
                       </div>
                     )}
                   </section>
                 );
               })}
+
+              {bookSort === 'by_availability' && unavailableBooks.length > 0 && (
+                <section className="mt-16 pt-8">
+                  <h2 className="text-xs font-semibold uppercase tracking-widest text-brand-muted mb-6 border-b border-black/5 pb-2">
+                    No resources yet
+                  </h2>
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 text-left">
+                    {unavailableBooks.map((book) => (
+                      <BookCard key={book.id} book={book} />
+                    ))}
+                  </div>
+                </section>
+              )}
             </motion.div>
           ) : (
             <motion.div
@@ -863,7 +968,10 @@ const BookDetailPage = () => {
       transition={{ duration: 0.3 }}
       className="min-h-screen pb-20"
     >
-      <div className="max-w-5xl mx-auto px-6 pt-12">
+      <div className="max-w-5xl mx-auto px-6 pt-12 relative">
+        <div className="absolute top-4 right-6 md:top-6">
+          <ThemeToggle />
+        </div>
         <div className="flex items-center gap-3 mb-12">
           <LogoLink size="small" />
         </div>
@@ -907,7 +1015,7 @@ const BookDetailPage = () => {
                     initial={{ opacity: 0, x: 10 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: 10 }}
-                    className="flex flex-wrap items-center gap-1 bg-white border border-black/5 p-1 rounded-xl h-10"
+                    className="flex flex-wrap items-center gap-1 bg-brand-card border border-black/5 p-1 rounded-xl h-10"
                   >
                     <button
                       onClick={() => setStorySort('by_story')}
@@ -956,8 +1064,8 @@ const BookDetailPage = () => {
                     disabled={!hasAnyStoryResources}
                     className={cn(
                       "group relative inline-flex h-5 w-10 flex-shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none",
-                      !hasAnyStoryResources ? "bg-black/5 cursor-not-allowed" : "cursor-pointer",
-                      hasAnyStoryResources && showNestedResources ? "bg-[#6576F3]" : (hasAnyStoryResources ? "bg-black/10" : "")
+                      !hasAnyStoryResources ? "bg-black/5 dark:bg-white/5 cursor-not-allowed" : "cursor-pointer",
+                      hasAnyStoryResources && showNestedResources ? "bg-[#6576F3]" : (hasAnyStoryResources ? "bg-[#6576F3]/50" : "")
                     )}
                   >
                     <span
@@ -984,7 +1092,7 @@ const BookDetailPage = () => {
                   <input
                     type="text"
                     placeholder="Find story or Bible passage"
-                    className="w-full h-10 pl-10 pr-4 bg-white border border-black/5 rounded-xl focus:outline-none focus:border-black/20 focus:ring-1 focus:ring-black/10 text-sm font-medium placeholder:text-brand-muted transition-all"
+                    className="w-full h-10 pl-10 pr-4 bg-brand-card border border-black/5 rounded-xl focus:outline-none focus:border-black/20 focus:ring-1 focus:ring-black/10 text-sm font-medium placeholder:text-brand-muted transition-all"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
@@ -998,8 +1106,8 @@ const BookDetailPage = () => {
                     disabled={!hasAnyStoryResources}
                     className={cn(
                       "group relative inline-flex h-5 w-10 flex-shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none",
-                      !hasAnyStoryResources ? "bg-black/5 cursor-not-allowed" : "cursor-pointer",
-                      hasAnyStoryResources && showNestedResources ? "bg-[#6576F3]" : (hasAnyStoryResources ? "bg-black/10" : "")
+                      !hasAnyStoryResources ? "bg-black/5 dark:bg-white/5 cursor-not-allowed" : "cursor-pointer",
+                      hasAnyStoryResources && showNestedResources ? "bg-[#6576F3]" : (hasAnyStoryResources ? "bg-[#6576F3]/50" : "")
                     )}
                   >
                     <span
@@ -1080,6 +1188,7 @@ const BookDetailPage = () => {
 
             {unavailableStories.length > 0 && (
               <div>
+
                 <h2 className="text-xs font-semibold uppercase tracking-widest text-brand-muted mb-6 border-b border-black/5 pb-2">No resources yet ({unavailableStories.length})</h2>
                 <div className="space-y-3">
                   {unavailableStories.map(renderStory)}
@@ -1211,11 +1320,13 @@ const ScrollToTop = () => {
 
 export default function App() {
   return (
-    <Router>
-      <ScrollToTop />
-      <AppContent />
-      <Footer />
-    </Router>
+    <ThemeProvider>
+      <Router>
+        <ScrollToTop />
+        <AppContent />
+        <Footer />
+      </Router>
+    </ThemeProvider>
   );
 }
 
