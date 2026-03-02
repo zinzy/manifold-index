@@ -21,7 +21,7 @@ export interface LectionaryEntry {
     };
 }
 
-export function getDailyReadings(date: Date): { title?: string, psalms: string[], lessons: string[] } {
+export function getDailyReadings(date: Date): { title?: string, day: string, week: string, psalms: string[], lessons: string[] } {
     const litDay = getLiturgicalDay(date);
 
     const data = litDay.year === 'Year One' ? year1 : year2;
@@ -33,7 +33,7 @@ export function getDailyReadings(date: Date): { title?: string, psalms: string[]
     );
 
     if (!entry) {
-        return { psalms: [], lessons: [] };
+        return { day: litDay.day, week: litDay.week, psalms: [], lessons: [] };
     }
 
     const { psalms, lessons } = entry;
@@ -47,6 +47,8 @@ export function getDailyReadings(date: Date): { title?: string, psalms: string[]
 
     return {
         title: entry.title,
+        day: litDay.day,
+        week: litDay.week,
         psalms: allPsalms,
         lessons: allLessons
     };

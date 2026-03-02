@@ -195,7 +195,7 @@ const LogoLink = ({ size = 'small' }: { size?: 'small' | 'large' }) => {
         <motion.div
           initial={{ opacity: 0, x: 2 }}
           whileHover={{ opacity: 1, x: 0 }}
-          className="absolute -left-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200"
+          className="hidden md:flex absolute -left-6 items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200"
         >
           <ArrowLeft className="w-4 h-4 text-brand-muted" />
         </motion.div>
@@ -627,16 +627,30 @@ const BookCard: React.FC<{ book: BibleBook }> = ({ book }) => {
 // --- Pages ---
 
 const ReadingsView = () => {
-  const { title, psalms, lessons } = getDailyReadings(new Date());
+  const { title, day, week, psalms, lessons } = getDailyReadings(new Date());
+
+  const displayTitle = title || `${day}, ${week}`;
 
   const matchedStories = useMemo(() => {
     const stories: { story: Story, bookId: string }[] = [];
     const allBooks = contentData.books as BibleBook[];
 
-    // Parse chapter from a reference string like "Gen. 1:1-2:3" or "John 12:44-50"
-    const parseChapter = (ref: string): number | null => {
-      const match = ref.match(/(\d+):/);
-      return match ? parseInt(match[1], 10) : null;
+    // Parse starting and ending chapters from a reference like "Gen. 1:1-2:3", "Gen 41:46-57", or "Gen. 37-50"
+    const parseChapterRange = (ref: string): { start: number, end: number } | null => {
+      // Find all numbers that are followed by a colon (i.e., chapters in a chapter:verse format)
+      let chapters = Array.from(ref.matchAll(/(\d+):/g)).map(m => parseInt(m[1], 10));
+
+      if (chapters.length === 0) {
+        // If no colons, extract all contiguous numbers from the string
+        chapters = Array.from(ref.matchAll(/\b(\d+)\b/g)).map(m => parseInt(m[1], 10));
+      }
+
+      if (chapters.length === 0) return null;
+
+      return {
+        start: chapters[0],
+        end: chapters[chapters.length - 1]
+      };
     };
 
     const normalizeBookName = (name: string) => name.toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -645,18 +659,35 @@ const ReadingsView = () => {
       const bName = normalizeBookName(b.name);
       // Find lessons or psalms that apply to this book
       const relevantReadings = [...lessons, ...psalms].filter(r => {
-        const rName = normalizeBookName(r.split(/\d/)[0]); // Get prefix before numbers
+        let rName = r;
+        const colonIndex = r.indexOf(':');
+        if (colonIndex !== -1) {
+          rName = r.substring(0, colonIndex);
+        }
+        rName = rName.replace(/\d+\s*$/, '').trim();
+        rName = normalizeBookName(rName);
+
+        // Don't match if rName is empty (defensive check)
+        if (!rName) return false;
+
         return rName.includes(bName) || bName.includes(rName); // E.g., '1 cor' matches '1 corinthians'
       });
 
       if (relevantReadings.length > 0) {
         b.stories.forEach(s => {
           if (s.resources.length > 0) {
-            const storyChapter = parseChapter(s.reference);
-            // Consider it a match if any relevant reading shares the same chapter
+            const storyRange = parseChapterRange(s.reference);
+
             const isMatch = relevantReadings.some(r => {
-              const readingChapter = parseChapter(r);
-              return storyChapter !== null && readingChapter !== null && storyChapter === readingChapter;
+              const readingRange = parseChapterRange(r);
+              if (!storyRange || !readingRange) return false;
+
+              // Adjacency check: Within +/- 1 chapter
+              return (
+                (readingRange.start >= storyRange.start - 1 && readingRange.start <= storyRange.end + 1) ||
+                (readingRange.end >= storyRange.start - 1 && readingRange.end <= storyRange.end + 1) ||
+                (storyRange.start >= readingRange.start && storyRange.end <= readingRange.end)
+              );
             });
 
             if (isMatch) {
@@ -673,7 +704,7 @@ const ReadingsView = () => {
     <div className="space-y-12">
       <section className="my-12">
         <h2 className="text-xl md:text-2xl font-semibold font-sans text-brand-text mb-2 text-center tracking-tight">Daily Office Readings</h2>
-        {title && <h3 className="text-sm font-semibold text-brand-muted text-center mb-4 uppercase tracking-wider">{title}</h3>}
+        <h3 className="text-sm font-semibold text-brand-muted text-center mb-4 uppercase tracking-wider">{displayTitle}</h3>
         <div className="flex flex-col items-center gap-6 pt-10">
           {psalms.length > 0 && (
             <div className="text-center">
