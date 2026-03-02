@@ -252,7 +252,7 @@ const Header = () => {
               WIP
             </motion.div>
           </div>
-          <h1 className="text-3xl md:text-4xl leading-tight max-w-2xl font-normal text-brand-text">
+          <h1 className="text-2xl md:text-3xl lg:text-4xl leading-tight max-w-2xl font-normal text-brand-text">
             A free repository of inclusive, liberating, deconstructing, queer-affirming, anti-racist, trauma-sensitive resources on every single story in the Bible
           </h1>
         </motion.div>
@@ -442,22 +442,32 @@ const SearchBar = ({
   showBookSort?: boolean
 }) => {
   const [isSticky, setIsSticky] = useState(false);
+  const searchBarRef = React.useRef<HTMLDivElement>(null);
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === 'dark';
 
   React.useEffect(() => {
     const handleScroll = () => {
-      setIsSticky(window.scrollY > 300);
+      if (searchBarRef.current) {
+        setIsSticky(searchBarRef.current.getBoundingClientRect().top <= 1);
+      } else {
+        setIsSticky(window.scrollY > 300);
+      }
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    // Trigger once on mount to handle initial load position
+    handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
-    <div className={cn(
-      "sticky top-0 z-10 transition-all duration-300 border-b bg-brand-bg/95 backdrop-blur-md",
-      isSticky ? "border-black/10 py-2" : "border-transparent py-4"
-    )}>
+    <div
+      ref={searchBarRef}
+      className={cn(
+        "sticky top-0 z-10 transition-all duration-300 border-b bg-brand-bg/95 backdrop-blur-md",
+        isSticky ? "border-black/10 py-2" : "border-transparent py-4"
+      )}
+    >
       <div className="max-w-5xl mx-auto px-6 my-1">
         <div className="flex flex-col md:flex-row items-center gap-3 md:gap-4">
           <div className={cn(
@@ -629,7 +639,29 @@ const BookCard: React.FC<{ book: BibleBook }> = ({ book }) => {
 const ReadingsView = () => {
   const { title, day, week, psalms, lessons } = getDailyReadings(new Date());
 
-  const displayTitle = title || `${day}, ${week}`;
+  const getOrdinal = (n: number) => {
+    const ords = ["", "First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "Eighth", "Ninth"];
+    return ords[n] || n + "th";
+  };
+
+  let displayTitle = title;
+  if (!displayTitle) {
+    const match = week.match(/Week of (\d+)\s+(.*)/i);
+    if (match && day.toLowerCase() !== 'sunday') {
+      const num = parseInt(match[1], 10);
+      const season = match[2];
+
+      let prep = 'in';
+      if (season.toLowerCase().includes('easter')) prep = 'of';
+      if (season.toLowerCase().includes('epiphany') || season.toLowerCase().includes('pentecost')) prep = 'after';
+      if (season.toLowerCase() === 'christmas') prep = 'after';
+
+      displayTitle = `${day} after the ${getOrdinal(num)} Sunday ${prep} ${season}`;
+    } else {
+      const formattedWeek = week.replace(/Week of (\d+) (.*)/i, 'Week $1 of $2');
+      displayTitle = title || `${day}, ${formattedWeek}`;
+    }
+  }
 
   const matchedStories = useMemo(() => {
     const stories: { story: Story, bookId: string }[] = [];
@@ -734,7 +766,7 @@ const ReadingsView = () => {
             {matchedStories.map(({ story, bookId }) => (
               <Link
                 key={story.id}
-                to={`/book/${bookId}`}
+                to={`/book/${bookId}/story/${story.id}`}
                 className="group bg-brand-card p-4 rounded-xl border border-black/5 flex flex-col hover:border-black/20 transition-all cursor-pointer"
               >
                 <div className="text-[11px] font-semibold text-brand-muted uppercase tracking-wider mb-2">
@@ -1097,12 +1129,18 @@ const BookDetailPage = () => {
   const unavailableStories = useMemo(() => filteredStories.filter(s => s.resources.length === 0), [filteredStories]);
 
   const [isToolbarSticky, setIsToolbarSticky] = useState(false);
+  const toolbarRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     const handleScroll = () => {
-      setIsToolbarSticky(window.scrollY > 400);
+      if (toolbarRef.current) {
+        setIsToolbarSticky(toolbarRef.current.getBoundingClientRect().top <= 1);
+      } else {
+        setIsToolbarSticky(window.scrollY > 400);
+      }
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -1216,10 +1254,13 @@ const BookDetailPage = () => {
         </p>
       </div>
 
-      <div className={cn(
-        "sticky top-0 z-10 transition-all duration-300 border-b bg-brand-bg/95 backdrop-blur-md mb-8",
-        isToolbarSticky ? "border-black/10 py-2" : "border-transparent py-4"
-      )}>
+      <div
+        ref={toolbarRef}
+        className={cn(
+          "sticky top-0 z-10 transition-all duration-300 border-b bg-brand-bg/95 backdrop-blur-md mb-8",
+          isToolbarSticky ? "border-black/10 py-2" : "border-transparent py-4"
+        )}
+      >
         <div className="max-w-5xl mx-auto px-6">
           <div className="flex flex-col md:flex-row items-center gap-3 md:gap-4">
             {/* Left: Toggles and Logo */}
@@ -1451,10 +1492,9 @@ const StoryDetailPage = () => {
       <div className="max-w-3xl mx-auto px-6 pt-12">
         <div className="flex items-center gap-3 mb-12">
           <LogoLink size="small" />
-          <div className="w-px h-4 bg-black/10 mx-1" />
           <button
             onClick={() => navigate(`/book/${book.id}`)}
-            className="text-[10px] font-semibold text-brand-muted hover:text-brand-text transition-colors uppercase tracking-widest cursor-pointer"
+            className="ml-5 text-[10px] font-semibold text-brand-muted hover:text-brand-text transition-colors uppercase tracking-widest cursor-pointer"
           >
             {book.name}
           </button>
