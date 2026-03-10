@@ -5665,6 +5665,13 @@
           "author": "Gabby Cudjoe-Wilkes Beck",
           "url": "https://faithandleadership.com/psalms-black-lives-reflections-the-work-liberation",
           "themes": []
+        },
+        {
+          "type": "article",
+          "title": "Black Lives Matter: A Psalm of Lament and Anger",
+          "author": "Chloe Becker",
+          "url": "https://ignatiansolidarity.net/blog/2020/07/13/black-lives-matter-psalm-lament-anger/",
+          "themes": []
         }
       ],
       "stories": [
@@ -6282,7 +6289,15 @@
           "reference": "Ps. 77",
           "summary": "",
           "themes": [],
-          "resources": []
+          "resources": [
+            {
+              "type": "Article",
+              "title": "Psalms | My soul refuses to be comforted",
+              "author": "Sanctuary Baptist",
+              "url": "https://sanctuarybaptist.org/2021/07/21/my-soul-refuses-to-be-comforted/",
+              "themes": []
+            }
+          ]
         },
         {
           "id": "ps-78",
@@ -9601,7 +9616,18 @@
           "reference": "Matt. 15:21–28",
           "summary": "",
           "themes": [],
-          "resources": []
+          "resources": [
+            {
+              "type": "Academic paper",
+              "title": "A Black Woman’s Prophetic Rage: An Epistemological Inheritance",
+              "author": "Dr. CL Nash",
+              "url": "https://www.tandfonline.com/doi/full/10.1080/14769948.2025.2465226#abstract",
+              "themes": [
+                "Womanism",
+                "Anti-racism"
+              ]
+            }
+          ]
         },
         {
           "id": "matt-15-29-39",

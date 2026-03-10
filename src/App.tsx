@@ -763,7 +763,12 @@ const ReadingsView = () => {
       }
     });
     return {
-      matchedItems: items.sort((a, b) => a.matchIndex - b.matchIndex)
+      matchedItems: items.sort((a, b) => {
+        if (a.matchIndex !== b.matchIndex) return a.matchIndex - b.matchIndex;
+        if (a.type === 'story' && b.type !== 'story') return -1;
+        if (a.type !== 'story' && b.type === 'story') return 1;
+        return 0;
+      })
     };
   }, [lessons, psalms]);
 
@@ -807,7 +812,7 @@ const ReadingsView = () => {
                   <h3 className="text-sm font-semibold font-sans text-brand-text mb-4 border-l-2 border-[#6576F3] pl-3 py-0.5">
                     {reading}
                   </h3>
-                  <div className="flex flex-col gap-4">
+                  <div className="flex flex-col gap-2">
                     {itemsForReading.map((item, idx) => {
                       if (item.type === 'bookResource') {
                         const { resource, bookName } = item;
