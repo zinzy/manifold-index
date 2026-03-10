@@ -663,14 +663,18 @@ const ReadingsView = () => {
     }
   }
 
-  const matchedStories = useMemo(() => {
+  const { matchedStories, matchedBookResources } = useMemo(() => {
     const stories: { story: Story, bookId: string }[] = [];
+    const bookResources: { resource: Resource, bookName: string, bookId: string }[] = [];
     const allBooks = contentData.books as BibleBook[];
 
     // Parse starting and ending chapters from a reference like "Gen. 1:1-2:3", "Gen 41:46-57", or "Gen. 37-50"
     const parseChapterRange = (ref: string): { start: number, end: number } | null => {
+      // Strip out common book prefixes that look like chapter numbers (e.g. "1 John" -> "John")
+      let cleanRef = ref.toLowerCase().replace(/^(1|2|3|i|ii|iii|first|second|third|1st|2nd|3rd)\s+/, '');
+
       // Find all numbers that are followed by a colon (i.e., chapters in a chapter:verse format)
-      let chapters = Array.from(ref.matchAll(/(\d+):/g)).map(m => parseInt(m[1], 10));
+      let chapters = Array.from(cleanRef.matchAll(/(\d+):/g)).map(m => parseInt(m[1], 10));
 
       if (chapters.length === 0) {
         // If no colons, extract all contiguous numbers from the string
@@ -702,10 +706,37 @@ const ReadingsView = () => {
         // Don't match if rName is empty (defensive check)
         if (!rName) return false;
 
-        return rName.includes(bName) || bName.includes(rName); // E.g., '1 cor' matches '1 corinthians'
+        return rName === bName || rName.startsWith(bName) || bName.startsWith(rName); // E.g., '1 cor' matches '1 corinthians'
       });
 
       if (relevantReadings.length > 0) {
+        if (b.resources && b.resources.length > 0) {
+          b.resources.forEach(r => {
+            const cleanTitle = r.title.toLowerCase().replace(b.name.toLowerCase(), '').trim();
+            const resRange = parseChapterRange(cleanTitle);
+
+            let isResMatch = false;
+            if (!resRange) {
+              // No specific chapters found, assume it applies to the whole book
+              isResMatch = true;
+            } else {
+              // Specific chapters found, check if they overlap with the day's readings
+              isResMatch = relevantReadings.some(read => {
+                const readingRange = parseChapterRange(read);
+                if (!readingRange) return false;
+
+                // Strict overlap check
+                return (resRange.start <= readingRange.end && resRange.end >= readingRange.start);
+              });
+            }
+
+            // Prevent exact duplicates in the array
+            if (isResMatch && !bookResources.some(br => br.resource.url === r.url && br.resource.title === r.title)) {
+              bookResources.push({ resource: r, bookName: b.name, bookId: b.id });
+            }
+          });
+        }
+
         b.stories.forEach(s => {
           if (s.resources.length > 0) {
             const storyRange = parseChapterRange(s.reference);
@@ -714,12 +745,8 @@ const ReadingsView = () => {
               const readingRange = parseChapterRange(r);
               if (!storyRange || !readingRange) return false;
 
-              // Adjacency check: Within +/- 1 chapter
-              return (
-                (readingRange.start >= storyRange.start - 1 && readingRange.start <= storyRange.end + 1) ||
-                (readingRange.end >= storyRange.start - 1 && readingRange.end <= storyRange.end + 1) ||
-                (storyRange.start >= readingRange.start && storyRange.end <= readingRange.end)
-              );
+              // Strict overlap check
+              return (storyRange.start <= readingRange.end && storyRange.end >= readingRange.start);
             });
 
             if (isMatch) {
@@ -729,7 +756,10 @@ const ReadingsView = () => {
         });
       }
     });
-    return stories;
+    return {
+      matchedStories: stories,
+      matchedBookResources: bookResources
+    };
   }, [lessons, psalms]);
 
   return (
@@ -757,17 +787,48 @@ const ReadingsView = () => {
         </div>
       </section>
 
-      {matchedStories.length > 0 ? (
+      {(matchedStories.length > 0 || matchedBookResources.length > 0) ? (
         <section>
           <h2 className="text-xs font-semibold uppercase tracking-widest text-brand-muted mb-6 border-b border-black/5 pb-2">
-            Related Stories ({matchedStories.length})
+            Related ({matchedStories.length + matchedBookResources.length})
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="columns-1 md:columns-2 gap-4">
+            {matchedBookResources.map(({ resource, bookName }, idx) => (
+              <a
+                key={`br-${idx}`}
+                href={resource.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group block break-inside-avoid mb-4 bg-brand-card p-4 rounded-xl border border-black/5 hover:border-black/20 transition-all cursor-pointer"
+              >
+                <div className="flex items-start justify-between gap-4 mb-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-semibold text-brand-muted uppercase tracking-wider">
+                      {bookName}
+                    </span>
+                    <span className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-200 rounded">
+                      {resource.type}
+                    </span>
+                  </div>
+                  <ExternalLink className="w-4 h-4 text-brand-muted group-hover:text-[#6576F3] transition-colors flex-shrink-0 mt-0.5" />
+                </div>
+                <h4 className="font-semibold text-lg group-hover:text-[#6576F3] transition-colors line-clamp-2">
+                  {resource.title}
+                </h4>
+                {resource.author && (
+                  <div className="text-sm text-brand-muted italic mt-1 line-clamp-2">
+                    By {resource.author}
+                    {resource.collection && ` in ${resource.collection}`}
+                  </div>
+                )}
+              </a>
+            ))}
+
             {matchedStories.map(({ story, bookId }) => (
               <Link
                 key={story.id}
                 to={`/book/${bookId}/story/${story.id}`}
-                className="group bg-brand-card p-4 rounded-xl border border-black/5 flex flex-col hover:border-black/20 transition-all cursor-pointer"
+                className="group block break-inside-avoid mb-4 bg-brand-card p-4 rounded-xl border border-black/5 hover:border-black/20 transition-all cursor-pointer"
               >
                 <div className="text-[11px] font-semibold text-brand-muted uppercase tracking-wider mb-2">
                   {story.reference}
@@ -869,9 +930,14 @@ const HomePage = () => {
     return (contentData.books as BibleBook[]).some(b => b.stories.some(s => s.resources.length > 0));
   }, []);
 
-  const [bookSort, setBookSort] = useState<'by_book' | 'by_availability' | 'readings'>(
-    hasAnyStoryResourcesGlobal ? 'by_availability' : 'by_book'
-  );
+  const bookSortParam = searchParams.get('sort') as 'by_book' | 'by_availability' | 'readings' | null;
+  const bookSort = bookSortParam || (hasAnyStoryResourcesGlobal ? 'by_availability' : 'by_book');
+
+  const setBookSort = (val: 'by_book' | 'by_availability' | 'readings') => {
+    const params = new URLSearchParams(searchParams);
+    params.set('sort', val);
+    setSearchParams(params, { replace: true });
+  };
 
   const availableBooks = useMemo(() => filteredBooks.filter(b => {
     const totalStoryResources = b.stories.reduce((acc, s) => acc + s.resources.length, 0);
@@ -1043,6 +1109,7 @@ const HomePage = () => {
 const BookDetailPage = () => {
   const { bookId } = useParams();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const book = (contentData.books as BibleBook[]).find(b => b.id === bookId);
 
   if (!book) return <div>Book not found</div>;
@@ -1053,9 +1120,14 @@ const BookDetailPage = () => {
     ? 'about_book'
     : hasAnyStoryResources ? 'by_availability' : 'by_story';
 
-  const [storySort, setStorySort] = useState<'by_story' | 'by_availability' | 'about_book'>(
-    initialSort
-  );
+  const storySortParam = searchParams.get('sort') as 'by_story' | 'by_availability' | 'about_book' | null;
+  const storySort = storySortParam || initialSort;
+
+  const setStorySort = (val: 'by_story' | 'by_availability' | 'about_book') => {
+    const params = new URLSearchParams(searchParams);
+    params.set('sort', val);
+    setSearchParams(params, { replace: true });
+  };
   const [showNestedResources, setShowNestedResources] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const { resolvedTheme } = useTheme();
@@ -1600,16 +1672,37 @@ export default function App() {
   );
 }
 
+const GlobalBackButton = () => {
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
+
+  if (pathname === '/') return null;
+
+  return (
+    <button
+      onClick={() => navigate(-1)}
+      className="fixed top-4 left-4 md:top-6 md:left-6 z-50 flex items-center justify-center gap-2 w-10 h-10 md:w-auto md:h-auto md:px-4 md:py-2 bg-white/90 dark:bg-black/90 backdrop-blur border border-black/10 dark:border-white/10 rounded-full shadow-sm text-[10px] md:text-xs font-semibold uppercase tracking-widest text-brand-text hover:bg-black/5 dark:hover:bg-white/5 hover:border-black/20 dark:hover:border-white/20 transition-all hover:-translate-x-1 cursor-pointer group"
+      aria-label="Go back"
+    >
+      <ArrowLeft className="w-4 h-4 text-brand-muted group-hover:text-brand-text transition-colors" />
+      <span className="hidden md:inline">Back</span>
+    </button>
+  );
+};
+
 function AppContent() {
   const location = useLocation();
 
   return (
-    <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/book/:bookId" element={<BookDetailPage />} />
-        <Route path="/book/:bookId/story/:storyId" element={<StoryDetailPage />} />
-      </Routes>
-    </AnimatePresence>
+    <>
+      <GlobalBackButton />
+      <AnimatePresence mode="wait">
+        <Routes location={location} key={location.pathname}>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/book/:bookId" element={<BookDetailPage />} />
+          <Route path="/book/:bookId/story/:storyId" element={<StoryDetailPage />} />
+        </Routes>
+      </AnimatePresence>
+    </>
   );
 }

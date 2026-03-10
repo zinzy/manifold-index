@@ -41,7 +41,7 @@ export function getDailyReadings(date: Date): { title?: string, day: string, wee
     const allPsalms = [
         ...(psalms?.morning || []),
         ...(psalms?.evening || [])
-    ].map(p => `Psalm ${p}`);
+    ].map(p => `Psalm ${p.replace(/\[|\]/g, '')}`);
 
     const allLessons = Object.values(lessons || {}).filter(Boolean) as string[];
 
