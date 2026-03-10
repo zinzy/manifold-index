@@ -663,10 +663,14 @@ const ReadingsView = () => {
     }
   }
 
-  const { matchedStories, matchedBookResources } = useMemo(() => {
-    const stories: { story: Story, bookId: string }[] = [];
-    const bookResources: { resource: Resource, bookName: string, bookId: string }[] = [];
+  const { matchedItems } = useMemo(() => {
+    type MatchedItem =
+      | { type: 'bookResource', resource: Resource, bookName: string, bookId: string, matchIndex: number }
+      | { type: 'story', story: Story, bookId: string, matchIndex: number };
+
+    const items: MatchedItem[] = [];
     const allBooks = contentData.books as BibleBook[];
+    const allReadings = [...psalms, ...lessons];
 
     // Parse starting and ending chapters from a reference like "Gen. 1:1-2:3", "Gen 41:46-57", or "Gen. 37-50"
     const parseChapterRange = (ref: string): { start: number, end: number } | null => {
@@ -694,7 +698,7 @@ const ReadingsView = () => {
     allBooks.forEach(b => {
       const bName = normalizeBookName(b.name);
       // Find lessons or psalms that apply to this book
-      const relevantReadings = [...lessons, ...psalms].filter(r => {
+      const relevantReadings = allReadings.filter(r => {
         let rName = r;
         const colonIndex = r.indexOf(':');
         if (colonIndex !== -1) {
@@ -715,13 +719,14 @@ const ReadingsView = () => {
             const cleanTitle = r.title.toLowerCase().replace(b.name.toLowerCase(), '').trim();
             const resRange = parseChapterRange(cleanTitle);
 
-            let isResMatch = false;
+            let matchIndex = -1;
             if (!resRange) {
               // No specific chapters found, assume it applies to the whole book
-              isResMatch = true;
+              matchIndex = allReadings.findIndex(read => relevantReadings.includes(read));
             } else {
               // Specific chapters found, check if they overlap with the day's readings
-              isResMatch = relevantReadings.some(read => {
+              matchIndex = allReadings.findIndex(read => {
+                if (!relevantReadings.includes(read)) return false;
                 const readingRange = parseChapterRange(read);
                 if (!readingRange) return false;
 
@@ -731,8 +736,8 @@ const ReadingsView = () => {
             }
 
             // Prevent exact duplicates in the array
-            if (isResMatch && !bookResources.some(br => br.resource.url === r.url && br.resource.title === r.title)) {
-              bookResources.push({ resource: r, bookName: b.name, bookId: b.id });
+            if (matchIndex !== -1 && !items.some(i => i.type === 'bookResource' && i.resource.url === r.url && i.resource.title === r.title)) {
+              items.push({ type: 'bookResource', resource: r, bookName: b.name, bookId: b.id, matchIndex });
             }
           });
         }
@@ -741,24 +746,24 @@ const ReadingsView = () => {
           if (s.resources.length > 0) {
             const storyRange = parseChapterRange(s.reference);
 
-            const isMatch = relevantReadings.some(r => {
-              const readingRange = parseChapterRange(r);
+            const matchIndex = allReadings.findIndex(read => {
+              if (!relevantReadings.includes(read)) return false;
+              const readingRange = parseChapterRange(read);
               if (!storyRange || !readingRange) return false;
 
               // Strict overlap check
               return (storyRange.start <= readingRange.end && storyRange.end >= readingRange.start);
             });
 
-            if (isMatch) {
-              stories.push({ story: s, bookId: b.id });
+            if (matchIndex !== -1) {
+              items.push({ type: 'story', story: s, bookId: b.id, matchIndex });
             }
           }
         });
       }
     });
     return {
-      matchedStories: stories,
-      matchedBookResources: bookResources
+      matchedItems: items.sort((a, b) => a.matchIndex - b.matchIndex)
     };
   }, [lessons, psalms]);
 
@@ -787,65 +792,128 @@ const ReadingsView = () => {
         </div>
       </section>
 
-      {(matchedStories.length > 0 || matchedBookResources.length > 0) ? (
+      {matchedItems.length > 0 ? (
         <section>
-          <h2 className="text-xs font-semibold uppercase tracking-widest text-brand-muted mb-6 border-b border-black/5 pb-2">
-            Related ({matchedStories.length + matchedBookResources.length})
+          <h2 className="text-xs font-semibold uppercase tracking-widest text-brand-muted mb-8 border-b border-black/5 pb-2">
+            Related ({matchedItems.length})
           </h2>
-          <div className="columns-1 md:columns-2 gap-4">
-            {matchedBookResources.map(({ resource, bookName }, idx) => (
-              <a
-                key={`br-${idx}`}
-                href={resource.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group block break-inside-avoid mb-4 bg-brand-card p-4 rounded-xl border border-black/5 hover:border-black/20 transition-all cursor-pointer"
-              >
-                <div className="flex items-start justify-between gap-4 mb-2">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-semibold text-brand-muted uppercase tracking-wider">
-                      {bookName}
-                    </span>
-                    <span className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-200 rounded">
-                      {resource.type}
-                    </span>
-                  </div>
-                  <ExternalLink className="w-4 h-4 text-brand-muted group-hover:text-[#6576F3] transition-colors flex-shrink-0 mt-0.5" />
-                </div>
-                <h4 className="font-semibold text-lg group-hover:text-[#6576F3] transition-colors line-clamp-2">
-                  {resource.title}
-                </h4>
-                {resource.author && (
-                  <div className="text-sm text-brand-muted italic mt-1 line-clamp-2">
-                    By {resource.author}
-                    {resource.collection && ` in ${resource.collection}`}
-                  </div>
-                )}
-              </a>
-            ))}
+          <div className="flex flex-col gap-8">
+            {[...psalms, ...lessons].map((reading, readingIdx) => {
+              const itemsForReading = matchedItems.filter(i => i.matchIndex === readingIdx);
+              if (itemsForReading.length === 0) return null;
 
-            {matchedStories.map(({ story, bookId }) => (
-              <Link
-                key={story.id}
-                to={`/book/${bookId}/story/${story.id}`}
-                className="group block break-inside-avoid mb-4 bg-brand-card p-4 rounded-xl border border-black/5 hover:border-black/20 transition-all cursor-pointer"
-              >
-                <div className="text-[11px] font-semibold text-brand-muted uppercase tracking-wider mb-2">
-                  {story.reference}
+              return (
+                <div key={readingIdx}>
+                  <h3 className="text-sm font-semibold font-sans text-brand-text mb-4 border-l-2 border-[#6576F3] pl-3 py-0.5">
+                    {reading}
+                  </h3>
+                  <div className="flex flex-col gap-4">
+                    {itemsForReading.map((item, idx) => {
+                      if (item.type === 'bookResource') {
+                        const { resource, bookName } = item;
+                        return (
+                          <a
+                            key={`br-${idx}`}
+                            href={resource.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="group w-full bg-brand-card p-4 rounded-xl border border-black/5 flex flex-col hover:border-black/20 transition-all cursor-pointer"
+                          >
+                            <div className="flex items-start justify-between gap-4 mb-2">
+                              <div className="flex items-center gap-2">
+                                <span className="text-[10px] font-semibold text-brand-muted uppercase tracking-wider">
+                                  {bookName}
+                                </span>
+                                <span className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-200 rounded">
+                                  {resource.type}
+                                </span>
+                              </div>
+                              <ExternalLink className="w-4 h-4 text-brand-muted group-hover:text-[#6576F3] transition-colors flex-shrink-0 mt-0.5" />
+                            </div>
+                            <h4 className="font-semibold text-lg group-hover:text-[#6576F3] transition-colors line-clamp-2">
+                              {resource.title}
+                            </h4>
+                            {resource.author && (
+                              <div className="text-sm text-brand-muted italic mt-1 line-clamp-2">
+                                By {resource.author}
+                                {resource.collection && ` in ${resource.collection}`}
+                              </div>
+                            )}
+                          </a>
+                        );
+                      } else {
+                        const { story, bookId } = item;
+                        return (
+                          <div key={`sr-${idx}-${story.id}`} className="mb-4">
+                            <Link
+                              to={`/book/${bookId}/story/${story.id}`}
+                              className="group bg-brand-card p-4 md:p-6 rounded-xl border border-black/5 flex flex-col md:flex-row md:items-center gap-4 transition-all hover:border-black/20 cursor-pointer"
+                            >
+                              <div className="w-24 text-[11px] font-semibold text-brand-muted uppercase tracking-wider">
+                                {story.reference}
+                              </div>
+                              <div className="flex-1">
+                                <div className="flex items-center gap-3 mb-1">
+                                  <h4 className="font-semibold text-lg group-hover:text-[#6576F3] transition-colors truncate">
+                                    {story.title}
+                                  </h4>
+                                  <span className="text-[10px] font-semibold h-6 w-6 bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-200 rounded-full border border-gray-200 flex items-center justify-center shrink-0">
+                                    {story.resources.length}
+                                  </span>
+                                </div>
+                                {story.themes && story.themes.length > 0 && (
+                                  <div className="flex flex-wrap gap-2 mt-1">
+                                    {story.themes.map(theme => (
+                                      <span key={theme} className="text-[9px] font-semibold uppercase tracking-wider text-brand-muted/60">
+                                        #{theme}
+                                      </span>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                              <div className="flex-1 text-sm text-brand-muted italic md:line-clamp-2">
+                                {story.summary}
+                              </div>
+                              <ChevronRight className="w-5 h-5 text-brand-muted opacity-0 group-hover:opacity-100 transition-opacity hidden md:block" />
+                            </Link>
+
+                            {story.resources.length > 0 && (
+                              <div className="pl-6 md:pl-20 mt-2 mb-6 space-y-2">
+                                {story.resources.map((res, i) => (
+                                  <a
+                                    key={`nest-${i}`}
+                                    href={res.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="group flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 bg-brand-card p-3 rounded-xl border border-black/5 hover:border-black/20 transition-all"
+                                  >
+                                    <div className="flex-shrink-0">
+                                      <span className="text-[9px] font-semibold uppercase tracking-wider px-1.5 py-0.5 bg-gray-100 text-gray-500 rounded">
+                                        {res.type}
+                                      </span>
+                                    </div>
+                                    <div className="flex-1 flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 truncate">
+                                      <h4 className="font-semibold text-sm group-hover:text-[#6576F3] transition-colors truncate">{res.title}</h4>
+                                      {res.author && (
+                                        <span className="text-xs text-brand-muted truncate">
+                                          by {res.author}
+                                          {res.collection && <span> in <span className="italic">{res.collection}</span></span>}
+                                        </span>
+                                      )}
+                                    </div>
+                                    <ExternalLink className="w-4 h-4 text-brand-muted group-hover:text-[#6576F3] transition-colors flex-shrink-0 hidden sm:block" />
+                                  </a>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      }
+                    })}
+                  </div>
                 </div>
-                <div className="flex items-center gap-3 mb-1">
-                  <h4 className="font-semibold text-lg group-hover:text-[#6576F3] transition-colors truncate">
-                    {story.title}
-                  </h4>
-                  <span className="text-[10px] font-semibold h-5 w-5 bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-200 rounded-full border border-gray-200 flex items-center justify-center shrink-0">
-                    {story.resources.length}
-                  </span>
-                </div>
-                <div className="text-sm text-brand-muted italic mt-1 line-clamp-2">
-                  {story.summary}
-                </div>
-              </Link>
-            ))}
+              );
+            })}
           </div>
         </section>
       ) : (

@@ -577,6 +577,24 @@
               "themes": [
                 "Queerdom"
               ]
+            },
+            {
+              "type": "Article",
+              "title": "(Gender)queering Joseph",
+              "author": "Rabbi Danya Ruttenberg",
+              "url": "https://lifeisasacredtext.substack.com/p/queering-joseph",
+              "themes": [
+                "Queerdom"
+              ]
+            },
+            {
+              "type": "Article",
+              "title": "Uncovering Joseph’s Bones (Parashat Vayechi)",
+              "author": "Rabbi Jill Hammer",
+              "url": "https://www.keshetonline.org/resources/uncovering-josephs-bones-parashat-vayechi/",
+              "themes": [
+                "Queerdom"
+              ]
             }
           ]
         },
@@ -5633,6 +5651,22 @@
       "name": "Psalms",
       "category": "Wisdom",
       "description": "Songs and prayers of the people of God.",
+      "resources": [
+        {
+          "type": "article",
+          "title": "The Psalms as Liberation Theology",
+          "author": "Richard Beck",
+          "url": "https://experimentaltheology.blogspot.com/2014/03/the-psalms-as-liberation-theology.html",
+          "themes": []
+        },
+        {
+          "type": "article",
+          "title": "Psalms for Black Lives: Reflections for the Work of Liberation",
+          "author": "Gabby Cudjoe-Wilkes Beck",
+          "url": "https://faithandleadership.com/psalms-black-lives-reflections-the-work-liberation",
+          "themes": []
+        }
+      ],
       "stories": [
         {
           "id": "ps-1",
@@ -6256,7 +6290,15 @@
           "reference": "Ps. 78",
           "summary": "",
           "themes": [],
-          "resources": []
+          "resources": [
+            {
+              "type": "Article",
+              "title": "Commentary on Psalm 78:1-4, 12-16",
+              "author": "Leslie Barnes Scoopmire",
+              "url": "https://abidinginhope.blogspot.com/2014/09/commentary-on-psalm-781-4-12-16.html",
+              "themes": []
+            }
+          ]
         },
         {
           "id": "ps-79",
@@ -10314,7 +10356,17 @@
           "reference": "Mark 6:1–6",
           "summary": "",
           "themes": [],
-          "resources": []
+          "resources": [
+            {
+              "type": "Article",
+              "title": "Redefining Authority: The Political Theology of Rejection in Mark 6: 1-6gy of the Body",
+              "author": "Jasmine Devadason",
+              "url": "https://politicaltheology.com/redefining-authority-the-political-theology-of-rejection-in-mark-6-1-6/",
+              "themes": [
+                ""
+              ]
+            }
+          ]
         },
         {
           "id": "mark-6-7-13",
@@ -13027,7 +13079,17 @@
           "reference": "1 Cor. 7:1–40",
           "summary": "",
           "themes": [],
-          "resources": []
+          "resources": [
+            {
+              "type": "Article",
+              "title": "Queer Theology",
+              "author": "Jack Slater and Susannah Cornwall",
+              "url": "https://www.saet.ac.uk/Christianity/QueerTheology",
+              "themes": [
+                "Queerdom"
+              ]
+            }
+          ]
         },
         {
           "id": "1-cor-8-1-13",
